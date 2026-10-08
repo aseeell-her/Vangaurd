@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanguard | Command the Drive</title>
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&family=Anton&display=swap" rel="stylesheet">
+
+    <meta name="theme-color" content="#0b0c10">
+    <script>document.documentElement.classList.add("js")</script>
+    <link rel="stylesheet" href="car.css">
+    <link rel="icon" type="image/x-icon" href="Gemini_Generated_Image_3rlvw03rlvw03rlv-removebg-preview.png">
+</head>
+<body>
+<div class="page-spot"></div><div class="cur" id="cur"></div><div class="wipe" id="wipe"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+<script src="car.js" defer></script>
+
+    <section id="hero" class="hero-section">
+
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="vangard.mp4" type="video/mp4">
+            Your browser does not support video play.
+        </video>
+
+        <div class="hero-overlay"></div>
+
+
+
+             <div class="hero-content">
+
+
+    <header class="navbar">
+
+        <div class="logo-container intro-anim anim-delay-2">
+            <img src="Gemini_Generated_Image_3rlvw03rlvw03rlv-removebg-preview.png" alt="Vanguard Logo" class="logo-img">
+            <span class="logo-text">VANGUARD</span>
+        </div>
+
+
+        <nav class="nav-links intro-anim anim-delay-4">
+            <a href="#hero">Home</a>
+            <a href="#fleet">Fleet</a>
+            <a href="#about-story">Experience</a>
+            <a href="#main-footer">Contact</a>
+        </nav>
+
+
+        <div class="nav-actions intro-anim anim-delay-4">
+            <a href="carts.html" class="btn-primary">Book Now</a>
+            <div class="language-dropdown">
+                <button class="language-btn">
+                    <span>EN</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="language-options">
+                    <a href="#" class="active">English</a>
+                    <a href="#">Arabic (العربية)</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="hero-text">
+
+        <p class="tagline intro-anim anim-delay-2">AMERICAN MUSCLE — REFINED</p>
+        <h1 class="intro-anim anim-delay-3">COMMAND THE UNRIVALED.</h1>
+        <p class="subtext intro-anim anim-delay-4">1972 Chevrolet Chevelle SS — Pure power engineered for ultimate road dominance.</p>
+
+
+        <div class="hero-cta-group intro-anim anim-delay-5">
+            <a href="carts.html" class="btn-primary main-cta">Explore Fleet</a>
+            <button id="engine-sound-btn" class="engine-sound-btn">
+                <span class="sound-icon">⚡</span>
+                <span class="sound-text">START ENGINE</span>
+            </button>
+        </div>
+    </div>
+
+
+    <div class="hero-specs-badge intro-anim anim-delay-5">
+        <div class="spec-item">
+            <span class="spec-value">V8</span>
+            <span class="spec-label">BIG BLOCK</span>
+        </div>
+        <div class="spec-divider"></div>
+        <div class="spec-item">
+            <span class="spec-value" data-count="4.8" data-dec="1" data-suffix="s" data-hero>4.8s</span>
+            <span class="spec-label">0–60 MPH</span>
+        </div>
+        <div class="spec-divider"></div>
+        <div class="spec-item">
+            <span class="spec-value">4-SPD</span>
+            <span class="spec-label">HURST MANUAL</span>
+        </div>
+    </div>
+
+
+    <div class="scroll-prompt intro-anim anim-delay-6">
+        <span class="scroll-text">SCROLL TO UNLEASH</span>
+        <div class="scroll-line"></div>
+    </div>
+
+</div>
+    </section>
+<section id="brand-showcase" class="cinematic-brand-section">
+    <!-- Cinematic Video Background -->
+    <video class="section-video-bg" autoplay muted loop playsinline poster="assets/images/hero-fallback.jpg">
+        <source src="hero.mp4" type="video/mp4">
+    </video>
+
+    <!-- Dark Glassmorphism Overlay -->
+    <div class="cinematic-overlay"></div>
+
+    <div class="brand-content-wrapper">
+        <div class="brand-header reveal-on-scroll">
+        <div>
+            <p class="section-tagline">WORLD-CLASS FLEET</p>
+            <h2 class="section-title">CHOOSE YOUR CAR <span class="accent-text">BY BRAND</span></h2>
+            <p class="section-subtitle">Select from world-renowned automotive engineering and luxury craftsmanship.</p>
+        </div>
+        </div>
+
+        <!-- Continuous Moving Brand Logo Track -->
+        <div class="infinite-logo-viewport reveal-on-scroll reveal-delay-1">
+            <div class="logo-track brand-track">
+
+                <!-- Brand Items (Placeholder Vectors / Crisp Monochrome SVGs) -->
+                <div class="logo-item" data-brand="mercedes">
+                    <img src="mercedes-benz-logo.png" alt="Mercedes-Benz" class="brand-logo-img">
+                    <span class="logo-fallback-text">MERCEDES</span>
+                </div>
+                <div class="logo-item" data-brand="toyota">
+                    <img src="toyota-logo.png" alt="Toyota" class="brand-logo-img">
+                    <span class="logo-fallback-text">TOYOTA</span>
+                </div>
+                <div class="logo-item" data-brand="ford">
+                    <img src="ford-logo.png" alt="Ford" class="brand-logo-img">
+                    <span class="logo-fallback-text">FORD</span>
+                </div>
+                <div class="logo-item" data-brand="chevrolet">
+                    <img src="chevrolet-logo.png" alt="Chevrolet" class="brand-logo-img">
+                    <span class="logo-fallback-text">CHEVROLET</span>
+                </div>
+                <div class="logo-item" data-brand="bmw">
+                    <img src="bmw-logo.png" alt="BMW" class="brand-logo-img">
+                    <span class="logo-fallback-text">BMW</span>
+                </div>
+                <div class="logo-item" data-brand="volkswagen">
+                    <img src="volkswagen-logo.png" alt="volkswagen" class="brand-logo-img">
+                    <span class="logo-fallback-text">VOLKSWAGEN</span>
+                </div>
+                <div class="logo-item" data-brand="dodge">
+                    <img src="dodge-logo.png" alt="Dodge" class="brand-logo-img">
+                    <span class="logo-fallback-text">DODGE</span>
+                </div>
+                <div class="logo-item" data-brand="hyundai">
+                    <img src="hyundai-logo.png" alt="Hyundai" class="brand-logo-img">
+                    <span class="logo-fallback-text">HYUNDAI</span>
+                </div>
+                 <div class="logo-item" data-brand="changan">
+                    <img src="changan-logo.png" alt="Changan" class="brand-logo-img">
+                    <span class="logo-fallback-text">CHANGAN</span>
+                </div>
+                <div class="logo-item" data-brand="nissan">
+                    <img src="nissan-logo.png" alt="Nissan" class="brand-logo-img">
+                    <span class="logo-fallback-text">NISSAN</span>
+                </div>
+                <div class="logo-item" data-brand="jeep">
+                    <img src="jeep-logo.png" alt="Jeep" class="brand-logo-img">
+                    <span class="logo-fallback-text">JEEP</span>
+                </div>
+                <div class="logo-item" data-brand="lexus">
+                    <img src="lexus-logo.png" alt="Lexus" class="brand-logo-img">
+                    <span class="logo-fallback-text">LEXUS</span>
+                </div>
+                <div class="logo-item" data-brand="kia">
+                    <img src="kia-logo.png" alt="Kia" class="brand-logo-img">
+                    <span class="logo-fallback-text">KIA</span>
+                </div>
+                <div class="logo-item" data-brand="jetour">
+                    <img src="jetour-logo-2023.png" alt="jetour" class="brand-logo-img">
+                    <span class="logo-fallback-text">JETOUR</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     TACTICAL PREVIEW & SEARCH COMMAND SECTION
+     ========================================================================== -->
+<section id="fleet" class="tactical-fleet-section">
+
+    <!-- 3D Spatial Holographic Grid Backdrop -->
+    <div class="hologram-3d-grid">
+        <div class="grid-plane"></div>
+        <div class="radar-scanline"></div>
+    </div>
+
+    <div class="tactical-container">
+
+        <!-- Header & Cyber Search Bar -->
+        <div class="tactical-header reveal-on-scroll">
+            <p class="section-tagline">TACTICAL FLEET SELECTION</p>
+            <h2 class="section-title">COMMAND YOUR <span class="accent-text">MACHINERY</span></h2>
+            <!-- HUD Search Bar -->
+            <div class="hud-search-wrapper">
+                <div class="search-input-box">
+                    <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    <input type="text" id="hudSearch" placeholder="SEARCH BY CAR NAME, BRAND, OR SPEC (E.G. G-CLASS, V8, BMW)..." autocomplete="off">
+                    <button type="button" class="hud-btn-search" id="hudGo">SEARCH</button>
+                </div>
+                <p class="hud-status" id="hudStatus" aria-live="polite"></p>
+                <!-- HUD Filter Tag Chips -->
+                <div class="hud-filter-chips">
+                    <button type="button" class="chip active" data-scope="all">ALL SPECS</button>
+                    <button type="button" class="chip" data-scope="brand">BRAND</button>
+                    <button type="button" class="chip" data-scope="model">MODEL</button>
+                    <button type="button" class="chip" data-scope="horsepower">HORSEPOWER</button>
+                    <button type="button" class="chip" data-scope="capacity">CAPACITY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5 Tactical Preview Cards -->
+        <div class="preview-cards-track reveal-on-scroll reveal-delay-1">
+
+            <!-- Card 1: G-Class -->
+            <div class="tactical-card" data-category="luxury">
+                <div class="card-glass-frame"></div>
+                <div class="card-badge">01 / LUXURY</div>
+                <div class="card-image-box">
+                    <img src="Gclass-2024.png" alt="Mercedes G-Class" class="car-preview-img" onerror="this.style.display='none'">
+                    <div class="img-glow-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>MERCEDES-AMG G-CLASS</h3>
+                    <p class="card-desc">Bulletproof luxury icon engineered with V8 bi-turbo dominance and command seating.</p>
+                    <div class="spec-grid">
+                        <span><strong>HP:</strong> 577 HP</span>
+                        <span><strong>0-100:</strong> 4.5s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: BMW -->
+            <div class="tactical-card" data-category="sport">
+                <div class="card-glass-frame"></div>
+                <div class="card-badge">02 / SPORT</div>
+                <div class="card-image-box">
+                    <img src="bmw2023-m4.png" alt="BMW M Series" class="car-preview-img" onerror="this.style.display='none'">
+                    <div class="img-glow-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>BMW M COMPETITION</h3>
+                    <p class="card-desc">Precision track weapon delivering instantaneous throttle response and aggressive cornering.</p>
+                    <div class="spec-grid">
+                        <span><strong>HP:</strong> 625 HP</span>
+                        <span><strong>0-100:</strong> 3.2s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Ford Territory -->
+            <div class="tactical-card" data-category="ordinary">
+                <div class="card-glass-frame"></div>
+                <div class="card-badge">03 / ORDINARY</div>
+                <div class="card-image-box">
+                    <img src="ford-teretory2025.png" alt="Ford Territory" class="car-preview-img" onerror="this.style.display='none'">
+                    <div class="img-glow-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>FORD TERRITORY</h3>
+                    <p class="card-desc">Modern everyday utility pairing efficient turbo performance with high cockpit comfort.</p>
+                    <div class="spec-grid">
+                        <span><strong>HP:</strong> 190 HP</span>
+                        <span><strong>DRIVE:</strong> AWD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Autonomous Limousine -->
+            <div class="tactical-card" data-category="chauffeur">
+                <div class="card-glass-frame"></div>
+                <div class="card-badge">04 / CYBER-PILOT</div>
+                <div class="card-image-box">
+                    <img src="limousine-2024.png" alt="Autonomous Limousine" class="car-preview-img" onerror="this.style.display='none'">
+                    <div class="img-glow-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>AUTONOMOUS VIP LIMOUSINE</h3>
+                    <p class="card-desc">Level-4 self-driving presidential cabin with noise-isolation glass and luxury lounge seats.</p>
+                    <div class="spec-grid">
+                        <span><strong>PILOT:</strong> AUTO AI</span>
+                        <span><strong>CLASS:</strong> FIRST</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Chevrolet Family -->
+            <div class="tactical-card" data-category="family">
+                <div class="card-glass-frame"></div>
+                <div class="card-badge">05 / FAMILY</div>
+                <div class="card-image-box">
+                    <img src="van2026.png" alt="Chevrolet Suburban" class="car-preview-img" onerror="this.style.display='none'">
+                    <div class="img-glow-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h3>CHEVROLET SUBURBAN</h3>
+                    <p class="card-desc">Heavy-duty 8-passenger command vehicle built for long-haul comfort and supreme cargo capacity.</p>
+                    <div class="spec-grid">
+                        <span><strong>SEATS:</strong> 8 SEATS</span>
+                        <span><strong>ENGINE:</strong> 6.2L V8</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Connected Scroll "Show All Fleet" Launcher -->
+        <div class="show-all-wrapper reveal-on-scroll reveal-delay-2">
+            <div class="connector-line"></div>
+            <a href="carts.html" class="show-all-btn">
+                <div class="hud-radar-ring"></div>
+                <span class="btn-text">SHOW ALL 45 VEHICLES</span>
+                <span class="btn-arrow">→</span>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+<section id="payment-methods" class="payment-section">
+    <div class="payment-container">
+
+
+            <div class="payment-header reveal-on-scroll">
+            <p class="section-tagline">SEAMLESS TRANSACTIONS</p>
+            <h2 class="payment-title">DRIVE NOW. <span class="accent-text">PAY YOUR WAY.</span></h2>
+        </div>
+
+        <!-- Continuous Moving Payment Logo Track -->
+<div class="infinite-logo-viewport reveal-on-scroll reveal-delay-1">
+            <div class="logo-track payment-track">
+
+                <div class="logo-item payment-item">
+                    <img src="visa-removebg-preview.png" alt="Visa" class="payment-logo-img">
+                </div>
+                <div class="logo-item payment-item">
+                    <img src="master-removebg-preview.png" alt="Mastercard" class="payment-logo-img">
+
+                </div>
+                <div class="logo-item payment-item">
+                    <img src="images.png" alt="Ahli" class="payment-logo-img">
+
+                </div>
+                <div class="logo-item payment-item">
+                    <img src="rajihi.png" alt="rajhi" class="payment-logo-img">
+
+                </div>
+                <div class="logo-item payment-item">
+                    <img src="images (2).jfif" alt="Inma" class="payment-logo-img">
+
+                </div>
+                 <div class="logo-item payment-item">
+                    <img src="1.png" alt="awal" class="payment-logo-img">
+
+                </div>
+                <div class="logo-item payment-item">
+                    <img src="mada.jfif" alt="Mada" class="payment-logo-img">
+
+                </div>
+                 <div class="logo-item payment-item">
+                    <img src="tabby.png" alt="tabby" class="payment-logo-img">
+
+                </div>
+                 <div class="logo-item payment-item">
+                    <img src="tamara-removebg-preview.png" alt="tamara" class="payment-logo-img">
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- ==========================================================================
+     TACTICAL SERVICES & TELEMATICS TRACKER
+     ========================================================================== -->
+<section id="services" class="tactical-services-section">
+    <div class="services-container">
+
+        <!-- Header -->
+        <div class="services-header reveal-on-scroll">
+            <p class="section-tagline">OPERATIONAL ADVANTAGE</p>
+            <h2 class="section-title">COMMAND & <span class="accent-text">CONCIERGE SERVICES</span></h2>
+            <p class="section-subtitle">Tailored vehicle logistics, private chauffeur deployment, and real-time fleet telemetry.</p>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid reveal-on-scroll reveal-delay-1">
+
+            <!-- Service 1: Airport & Location Delivery -->
+            <div class="service-card">
+                <div class="service-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+                </div>
+                <span class="service-code">01 / DEPLOYMENT</span>
+                <h3>AIRPORT & PIN HANDOFF</h3>
+                <p>Receive your vehicle directly at terminal arrivals, private jet hangars, or any custom pinpoint location 24/7.</p>
+            </div>
+
+            <!-- Service 2: Executive Chauffeur -->
+            <div class="service-card">
+                <div class="service-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                </div>
+                <span class="service-code">02 / PROTECTION</span>
+                <h3>EXECUTIVE CHAUFFEUR</h3>
+                <p>Security-cleared professional drivers dedicated to presidential, corporate, or private VIP transit.</p>
+            </div>
+
+            <!-- Service 3: Roadside Support -->
+            <div class="service-card">
+                <div class="service-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.6C.4 7 1 10 3 12c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.4-.4.4-1.1 0-1.3z"/></svg>
+                </div>
+                <span class="service-code">03 / GUARANTEE</span>
+                <h3>24/7 TACTICAL SUPPORT</h3>
+                <p>Instant mechanical dispatch, tire management, or vehicle hot-swaps anywhere in the region.</p>
+            </div>
+
+            <!-- Service 4: Flexible Subscription -->
+            <div class="service-card">
+                <div class="service-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                </div>
+                <span class="service-code">04 / FLEXIBILITY</span>
+                <h3>FLEET SUBSCRIPTION</h3>
+                <p>Switch between luxury sedans, supercars, and heavy SUVs with tailored short or long-term lease terms.</p>
+            </div>
+
+        </div>
+
+<!-- LIVE CAR MAP TELEMATICS TRACKER -->
+<div class="telematics-tracker-wrapper reveal-on-scroll reveal-delay-2">
+
+    <div class="map-interactive-card" tabindex="0" role="button" aria-label="Toggle live GPS tracker preview">
+
+        <!-- Background Real Street Map Layer -->
+        <div class="map-bg-layer">
+            <!-- High-resolution Dark Mode Street Map Image -->
+            <img src="IMG_4232.jpg" alt="Real Street Map View" class="real-map-img">
+            <div class="map-vignette-overlay"></div>
+
+            <!-- Live Markers and Pulsing Radar -->
+            <div class="gps-radar-pulse"></div>
+            <div class="pin-marker">
+                <span class="pin-title">G-CLASS / AMG-01</span>
+            </div>
+        </div>
+
+        <!-- Hover Image & Phone UI Overlay -->
+        <div class="phone-tracker-overlay">
+            <img src="images__2_-removebg-preview.png" alt="Person tracking vehicle on smartphone" class="phone-hand-img" onerror="this.style.display='none'">
+
+            <!-- Simulated Digital Phone Screen UI -->
+            <div class="digital-phone-screen">
+                <div class="phone-header">
+                    <span class="signal-dot">● LIVE GPS</span>
+                    <span class="speed-readout">112 KM/H</span>
+                </div>
+                <div class="phone-body">
+                    <h4>MERCEDES G63 AMG</h4>
+                    <p class="coords">LAT: 24.7136° N | LONG: 46.6753° E</p>
+                    <div class="stat-bar">
+                        <span>FUEL LEVEL: 88%</span>
+                        <span>SECURITY: ARMED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Static Card Text Content -->
+        <div class="tracker-card-content">
+            <span class="category-code">SATELLITE TELEMATICS</span>
+            <h3>LIVE GPS FLEET TRACKER</h3>
+            <p>HOVER TO ENGAGE REAL-TIME TELEMETRY MONITORING</p>
+        </div>
+
+    </div>
+
+</div>
+
+    </div>
+</section>
+<!-- ==========================================================================
+     STORY & ABOUT SECTION (WITH DYNAMIC VIDEO INTRO)
+     ========================================================================== -->
+<section id="about-story" class="about-story-section reveal-on-scroll">
+
+    <!-- Background Video (100% Clear, No Dark Overlays) -->
+    <video id="aboutVideo" class="about-video-bg" playsinline muted preload="auto">
+        <source src="about.mp4" type="video/mp4">
+    </video>
+    <div class="video-fallback-overlay"></div>
+
+    <!-- Side-Aligned Overlay Content Container -->
+    <div class="about-content-container">
+        <!-- Left Side: Brand Vision & Story (Triggers at 1.5s) -->
+        <div class="side-text left-side-text" id="aboutLeftText">
+            <span class="hud-tag">01 / OUR MANIFESTO</span>
+            <h2 class="side-title">ENGINEERED FOR <br><span class="accent-text">THE UNCOMPROMISING</span></h2>
+            <p class="side-desc">
+                We didn't set out to build another vehicle rental agency. We created an operational advantage for drivers who demand peak precision, raw power, and absolute prestige on every journey.
+            </p>
+        </div>
+
+        <!-- Right Side: Tactical Value & Spec Counters (Triggers at 1.5s) -->
+        <div class="side-text right-side-text" id="aboutRightText">
+            <div class="hud-spec-card">
+                <span class="spec-value" data-count="100" data-suffix="%">100%</span>
+                <span class="spec-label">GUARANTEED EXACT MODEL</span>
+            </div>
+
+            <div class="hud-spec-card">
+                <span class="spec-value" data-from="9.9" data-count="0" data-dec="1" data-suffix="s">0.0s</span>
+                <span class="spec-label">TERMINAL DEPLOYMENT DELAY</span>
+            </div>
+
+            <a href="#services" class="hud-action-btn">EXPLORE OPERATIONS →</a>
+        </div>
+
+    </div>
+</section>
+<!-- ==========================================================================
+     TACTICAL FOOTER WITH MINI MAP & BRAND SYSTEM STATUS
+     ========================================================================== -->
+<footer id="main-footer" class="tactical-footer reveal-on-scroll">
+    <div class="footer-container">
+        <div class="footer-grid">
+
+            <!-- Column 1: Brand & Mini Map Thumbnail -->
+            <div class="footer-brand-col">
+                <a href="#hero" class="footer-logo">
+                    <span class="logo-icon">▲</span><span class="accent-text">VANGUARD</span>
+                </a>
+                <p class="footer-brand-desc">
+                    High-performance vehicle logistics and VIP telematic fleet management. Command the asphalt with zero delay.
+                </p>
+
+                <!-- Small Map Image in Bottom Left Corner -->
+                <div class="footer-map-box">
+                    <img src="IMG_4231.PNG" alt="HQ Location Map" class="footer-mini-map">
+                    <div class="map-ping"></div>
+                    <span class="map-location-label">HQ / RIYADH COMMAND</span>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="footer-links-col">
+                <h4 class="footer-heading">NAVIGATION</h4>
+                <ul class="footer-links">
+                    <li><a href="#hero">Command Center</a></li>
+                    <li><a href="#about-story">About Vanguard</a></li>
+                    <li><a href="#services">Concierge Services</a></li>
+                    <li><a href="#fleet">Vehicle Fleet</a></li>
+                    <li><a href="#payment-methods">Payment Clearance</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Contact & Operational HQ -->
+            <div class="footer-contact-col">
+                <h4 class="footer-heading">OPERATIONS HQ</h4>
+                <p class="contact-item">
+                    <span class="item-label">LOCATION:</span>
+                    <span>King Fahd Road, Sky Tower, Floor 14</span>
+                </p>
+                <p class="contact-item">
+                    <span class="item-label">DIRECT LINE:</span>
+                    <span>+966 11 000 8899</span>
+                </p>
+                <p class="contact-item">
+                    <span class="item-label">ENCRYPTION EMAIL:</span>
+                    <span>dispatch@apexdrives.com</span>
+                </p>
+            </div>
+
+            <!-- Column 4: System Status & Social Channels -->
+            <div class="footer-status-col">
+                <h4 class="footer-heading">SYSTEM STATUS</h4>
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span>FLEET TELEMATICS: ONLINE</span>
+                </div>
+
+                <h4 class="footer-heading social-heading">CONNECT</h4>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram">IG</a>
+                    <a href="#" aria-label="X Twitter">X</a>
+                    <a href="#" aria-label="LinkedIn">LN</a>
+                    <a href="#" aria-label="WhatsApp">WA</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Bottom Bar -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 VANGUARD DRIVES. ALL RIGHTS RESERVED.</p>
+            <div class="footer-legal">
+                <a href="#">PRIVACY POLICY</a>
+                <span class="sep">/</span>
+                <a href="#">TERMS OF DISPATCH</a>
+            </div>
+        </div>
+
+    </div>
+</footer>
+</body>
+</html>

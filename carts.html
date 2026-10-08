@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.classList.add("js")</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fleet | Vanguard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0e11; --graphite:#1b1d22; --steel:#8b919b; --smoke:#e7e9ee;
+  --ac:#e4f21c; --ease:cubic-bezier(.77,0,.18,1);
+  --glass:rgba(255,255,255,.07); --edge:rgba(255,255,255,.14);
+  --mx:50vw; --my:50vh; --tx:0; --ty:0; --rx:0deg; --ry:0deg;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+html,body{min-height:100%;overflow-x:clip;background:var(--ink);color:var(--smoke);font-family:Barlow,system-ui,sans-serif}
+button,a{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+
+/* ---------- stage ---------- */
+.stage{position:relative;height:100vh;height:100svh;width:100%;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 38%,#4a4e57 0%,#2a2d33 38%,#0d0e11 80%);
+  touch-action:pan-y;user-select:none}
+.bgv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;mix-blend-mode:luminosity;transition:opacity 1.5s;filter:grayscale(1) contrast(1.1)}
+.bgv.ok{opacity:.28}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.18;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.spot{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(520px circle at var(--mx) var(--my),rgba(255,255,255,.11),transparent 60%)}
+.floor{position:absolute;left:0;right:0;bottom:0;height:34vh;pointer-events:none;
+  background:linear-gradient(to top,rgba(0,0,0,.75),transparent);}
+.glow{position:absolute;left:50%;top:70%;width:70vw;height:18vh;translate:-50% 0;border-radius:50%;
+  background:var(--ac);filter:blur(90px);opacity:.22;transition:background 1s,opacity 1s;pointer-events:none}
+
+/* ---------- top bar ---------- */
+.top{position:fixed;z-index:70;top:max(18px,env(safe-area-inset-top));left:50%;translate:-50% 0;
+  display:flex;align-items:center;gap:clamp(18px,4vw,56px);padding:10px 14px 10px 24px;border-radius:999px;
+  background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 20px 50px rgba(0,0,0,.4)}
+.logo{font-family:Anton,Impact,sans-serif;font-size:20px;letter-spacing:.06em}
+.logo i{font-style:normal;color:var(--ac);transition:color .8s}
+.top nav{display:flex;gap:6px}
+.top nav a{padding:9px 18px;border-radius:999px;text-decoration:none;font-size:15px;font-weight:500;color:var(--steel);transition:.3s}
+.top nav a:hover{color:var(--smoke)}
+.top nav a[aria-current]{background:rgba(255,255,255,.12);color:var(--smoke)}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;pointer-events:none}
+.name{position:absolute;left:0;right:0;top:15vh;text-align:center;line-height:.9;
+  transform:translate(calc(var(--o) * 38vw + var(--tx) * -26px),calc(var(--ty) * -14px));
+  transition:transform 1.1s var(--ease)}
+.brand{font-family:Anton,Impact,sans-serif;font-size:clamp(20px,3.2vw,46px);letter-spacing:.32em;padding-left:.32em;color:var(--steel);overflow:hidden}
+.model{font-family:Anton,Impact,sans-serif;font-size:min(17vw,29vh);letter-spacing:.015em;white-space:nowrap;overflow:hidden;padding-top:.04em;
+}
+.model b{background:linear-gradient(180deg,rgba(214,219,228,.55) 5%,rgba(120,126,137,.3) 60%,rgba(60,64,72,.2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand b,.model b{display:inline-block;font-weight:400;transform:translateY(calc(110% * var(--hide)));transition:transform .9s var(--ease);transition-delay:calc(var(--i) * 38ms)}
+.slide{--hide:1}.slide.on{--hide:0}
+.car{position:absolute;left:0;right:0;top:33vh;height:42vh;display:grid;place-items:center;
+  transform:translateX(calc(var(--o) * 105vw)) skewX(calc(var(--o) * -12deg));
+  transition:transform 1s var(--ease),opacity .6s;opacity:0;perspective:1400px}
+.slide.near .car{opacity:1}
+.car-in{will-change:transform;transform:rotateX(var(--rx)) rotateY(var(--ry));transform-style:preserve-3d;
+  display:grid;place-items:center;transition:translate .9s var(--ease),scale .9s var(--ease)}
+.car img{height:calc(41vh * var(--s,1));width:auto;max-width:84vw;object-fit:contain;
+  -webkit-box-reflect:below -2% linear-gradient(transparent 62%,rgba(255,255,255,.22));
+  filter:drop-shadow(0 30px 28px rgba(0,0,0,.55));animation:breathe 5s ease-in-out infinite alternate}
+@keyframes breathe{to{translate:0 -6px}}
+.det .slide.on .car-in{translate:-17vw 0;scale:.78}
+.det .slide.on .name{opacity:.35}
+.det .count,.det .arrow.r{opacity:0;pointer-events:none}
+.count,.arrow{transition:opacity .5s,background .35s,scale .35s}
+.name{transition:transform 1.1s var(--ease),opacity .8s}
+
+/* ---------- controls ---------- */
+.cta{position:absolute;z-index:10;left:0;right:0;bottom:calc(11vh + env(safe-area-inset-bottom));display:flex;gap:14px;justify-content:center;transition:translate .9s var(--ease)}
+.det .cta{translate:-17vw 0}
+.btn{padding:14px 34px;border-radius:12px;font-weight:600;font-size:15px;letter-spacing:.04em;text-decoration:none;transition:.35s;position:relative;overflow:hidden}
+.btn.fill{background:var(--ac);color:#0b0c0e;box-shadow:0 10px 36px -8px var(--ac)}
+.btn.fill:hover{transform:translateY(-3px);box-shadow:0 18px 44px -8px var(--ac)}
+.btn.ghost{background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.btn.ghost:hover{background:rgba(255,255,255,.16)}
+.arrow{position:absolute;z-index:10;top:56%;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;
+  background:var(--glass);border:1px solid var(--edge);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:.35s}
+.arrow:hover{background:var(--ac);color:#0b0c0e;scale:1.08}
+.arrow.l{left:clamp(14px,3vw,48px)}.arrow.r{right:clamp(14px,3vw,48px)}
+.arrow svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.dots{position:absolute;z-index:10;bottom:calc(4.5vh + env(safe-area-inset-bottom));left:50%;translate:-50% 0;display:flex;gap:10px;align-items:center}
+.dots button{width:34px;height:20px;display:grid;align-items:center}
+.dots button::before{content:"";height:3px;border-radius:2px;background:rgba(255,255,255,.22);transition:.5s}
+.dots button.on::before{background:var(--ac);box-shadow:0 0 14px var(--ac)}
+.count{position:absolute;z-index:10;right:clamp(14px,3vw,48px);bottom:calc(4vh + env(safe-area-inset-bottom));font-family:Anton,Impact,sans-serif;font-size:26px;letter-spacing:.08em;color:var(--steel)}
+.count b{color:var(--smoke);font-weight:400}
+.social{position:absolute;z-index:10;left:clamp(14px,3vw,48px);bottom:calc(4vh + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px}
+.social a{color:var(--steel);transition:.3s;display:block}
+.social a:hover{color:var(--ac);translate:4px 0}
+.social svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}
+
+/* ---------- launch streaks ---------- */
+.streaks{position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen;
+  background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,255,255,.35) 22px 23px,transparent 23px 61px,rgba(255,255,255,.2) 61px 62px,transparent 62px 97px);
+  -webkit-mask:linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent);mask:linear-gradient(90deg,transparent,#000 30%,#000 70%,transparent)}
+.streaks.go{animation:streak .9s var(--ease)}
+@keyframes streak{0%{opacity:0;transform:translateX(calc(var(--dir) * 30vw)) scaleX(.6)}30%{opacity:.9}100%{opacity:0;transform:translateX(calc(var(--dir) * -30vw)) scaleX(1.4)}}
+
+/* ---------- details drawer ---------- */
+.drawer{position:absolute;z-index:30;top:max(96px,12vh);bottom:max(24px,5vh);right:clamp(14px,3vw,48px);width:min(440px,92vw);padding:34px 32px;border-radius:26px;
+  background:linear-gradient(160deg,rgba(255,255,255,.13),rgba(255,255,255,.04));border:1px solid var(--edge);
+  backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 40px 90px rgba(0,0,0,.55);
+  display:flex;flex-direction:column;gap:20px;overflow:auto;
+  translate:120% 0;opacity:0;transition:translate .9s var(--ease),opacity .6s;visibility:hidden}
+.det .drawer{translate:0 0;opacity:1;visibility:visible}
+.drawer .tag{color:var(--ac);font-weight:600;font-size:14px;letter-spacing:.08em}
+.drawer h2{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:44px;line-height:1;letter-spacing:.02em}
+.drawer p{color:#c3c7cf;line-height:1.65;font-size:16px;max-width:60ch}
+.specs{display:grid;gap:14px}
+.spec{display:grid;grid-template-columns:1fr auto;gap:6px 10px;font-size:14px;color:var(--steel)}
+.spec strong{color:var(--smoke);font-family:Anton,Impact,sans-serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+.bar{grid-column:1/-1;height:4px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;width:calc(var(--v) * 1%);background:var(--ac);transform-origin:left;transform:scaleX(0);transition:transform 1.2s var(--ease) .35s}
+.det .bar i{transform:scaleX(1)}
+.price{display:flex;align-items:baseline;gap:8px;margin-top:auto;padding-top:6px;border-top:1px solid var(--edge)}
+.price b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:36px}
+.price span{color:var(--steel)}
+.x{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;transition:.3s}
+.x:hover{background:var(--ac);color:#0b0c0e;rotate:90deg}
+
+.cur{position:fixed;z-index:50;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:1px solid rgba(255,255,255,.4);pointer-events:none;
+  transition:width .3s,height .3s,margin .3s,background .3s,border-color .3s;mix-blend-mode:difference}
+.cur.big{width:78px;height:78px;margin:-39px 0 0 -39px;background:rgba(255,255,255,.9)}
+@media (pointer:coarse){.cur{display:none}}
+
+@media (max-width:760px){
+  .top nav a{padding:8px 12px;font-size:14px}.logo{display:none}.top{padding:8px}
+  .arrow{top:auto;bottom:calc(22vh);width:46px;height:46px}.social{display:none}
+  .model{font-size:min(19vw,22vh)}.car{top:33vh}.car img{height:auto;width:calc(88vw * min(var(--s,1),1.1))}
+  .det .slide.on .car-in{translate:0 -9vh;scale:.6}.det .cta{translate:0 0;opacity:0;pointer-events:none}
+  .drawer{top:auto;height:56vh;bottom:0;right:0;left:0;width:100%;border-radius:26px 26px 0 0;translate:0 110%}
+  .count{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}}
+
+.wipe{position:fixed;inset:0;z-index:400;pointer-events:none;transform:translateX(-101%);
+  background:linear-gradient(90deg,#0d0e11 85%,#3a3e46),#0d0e11}
+.wipe::after{content:"";position:absolute;inset:0;opacity:.5;
+  background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,255,255,.35) 22px 23px,transparent 23px 61px,rgba(255,255,255,.2) 61px 62px,transparent 62px 97px)}
+.wipe.cover{transform:none;transition:transform .55s cubic-bezier(.77,0,.18,1)}
+.wipe.hold{transform:none;transition:none}
+.wipe.out{transform:translateX(101%);transition:transform .7s cubic-bezier(.77,0,.18,1)}
+</style>
+<style>
+/* ===== ARSENAL: video scenes, fleet, vault, dock, contract ===== */
+:root{--out:cubic-bezier(.16,1,.3,1);--io:cubic-bezier(.77,0,.18,1)}
+html.lock{overflow:hidden}
+.progress{position:fixed;top:0;left:0;width:100%;height:3px;z-index:120;background:linear-gradient(90deg,#555a64,var(--ac,#fff),#fff);transform:scaleX(0);transform-origin:left;pointer-events:none}
+.cue{position:absolute;z-index:12;right:clamp(14px,3vw,48px);bottom:calc(11vh + 4px);display:flex;align-items:center;gap:.7rem;font-size:12px;font-weight:600;letter-spacing:.22em;color:var(--steel);transition:color .3s}
+.cue::after{content:"";width:1px;height:46px;background:linear-gradient(var(--ac),transparent);animation:drip 2s ease-in-out infinite}
+.cue:hover{color:#fff}@keyframes drip{50%{transform:scaleY(.4);transform-origin:top}}
+@media(max-width:760px){.cue{display:none}}
+
+/* masked line + fade cues, fired by video time */
+.ln{display:block;overflow:hidden;line-height:.98;padding-bottom:.06em}
+.ln>span{display:block;transform:translateY(112%);transition:transform 1.1s var(--out)}
+.ln.show>span{transform:none}
+[data-at]:not(.ln){opacity:0;translate:0 26px;transition:opacity .9s var(--out),translate .9s var(--out)}
+[data-at].show:not(.ln){opacity:1;translate:0 0}
+.eyebrow{display:inline-flex;align-items:center;gap:.8rem;font-size:.8rem;font-weight:600;letter-spacing:.38em;color:var(--ac,#f59e0b);margin-bottom:1.2rem}
+.eyebrow::before{content:"";width:38px;height:2px;background:currentColor}
+.big{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(3rem,10vw,9rem)}
+.big .hl{background:linear-gradient(180deg,#fff 10%,#9aa0aa 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:560px;margin:1.6rem auto 0;color:#b9bec8;font-size:clamp(1rem,1.5vw,1.2rem);line-height:1.6}
+
+/* scene 1: pinned landscape video behind the whole fleet */
+.arsenal{position:relative;--ac:#f59e0b;background:#0b0c0f;scroll-margin-top:0}
+.vbg{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;z-index:0;clip-path:inset(0 50% 0 50%);transition:clip-path 1.6s var(--io)}
+.arsenal.in .vbg{clip-path:inset(0)}
+.vbg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(.45) contrast(1.1) brightness(.8);transform:scale(1.18);transition:transform 5s var(--out)}
+.arsenal.in .vbg video{transform:scale(1)}
+.vshade{position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 40%,rgba(13,14,17,0),rgba(13,14,17,.85)),linear-gradient(rgba(13,14,17,.6),transparent 28%,rgba(13,14,17,.92))}
+.s1{position:relative;z-index:2;height:100vh;height:100svh;margin-top:-100vh;margin-top:-100svh;display:grid;place-content:center;text-align:center;padding:0 5vw;
+  opacity:calc(1 - var(--p,0) * 1.3);translate:0 calc(var(--p,0) * -60px)}
+.fleet{position:relative;z-index:2;padding:6rem 0 0;background:linear-gradient(to bottom,transparent,rgba(11,12,15,.78) 220px)}
+
+/* toolbar (glass, no boxes around cars) */
+.tb{max-width:1200px;margin:0 auto 4.5rem;width:calc(100% - 2rem);padding:1rem;border-radius:24px;display:grid;gap:.9rem;background:rgba(255,255,255,.06);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 30px 70px rgba(0,0,0,.45)}
+.tb-top{display:grid;grid-template-columns:1fr auto auto;gap:.8rem;align-items:center}
+.srch{display:flex;align-items:center;gap:.8rem;padding:0 1.1rem;height:54px;border-radius:14px;background:rgba(0,0,0,.35);border:1px solid var(--edge);transition:.3s}
+.srch:focus-within{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 22%,transparent),0 0 36px color-mix(in srgb,var(--ac) 25%,transparent)}
+.srch svg{width:20px;height:20px;fill:none;stroke:var(--ac);stroke-width:2;flex:none}
+.srch input{flex:1;min-width:0;background:none;border:0;outline:0;color:#fff;font:500 16px Barlow,sans-serif}
+.srch input::placeholder{color:#7d838e}
+.sel select{height:54px;padding:0 2.4rem 0 1.1rem;border-radius:14px;background:rgba(0,0,0,.35) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' fill='none' stroke='%238b919b' stroke-width='2'/></svg>") no-repeat right 1rem center;border:1px solid var(--edge);color:#fff;font:600 14px Barlow,sans-serif;letter-spacing:.06em;appearance:none;-webkit-appearance:none;cursor:pointer}
+.sel option{background:#1b1d22}
+.cnt{font-family:Anton,Impact,sans-serif;letter-spacing:.08em;color:var(--steel);white-space:nowrap}
+.cnt b{color:#fff;font-weight:400}
+.chips{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.chips>span{font-size:.7rem;font-weight:700;letter-spacing:.24em;color:#6f7580;margin-right:.4rem}
+.chips button{padding:.55rem 1.05rem;border-radius:999px;font:600 13px Barlow,sans-serif;letter-spacing:.06em;color:#aab0ba;background:rgba(255,255,255,.05);border:1px solid var(--edge);transition:.3s}
+.chips button:hover{color:#fff;background:rgba(255,255,255,.12)}
+.chips button.on{background:var(--ac);border-color:var(--ac);color:#0b0c0e;box-shadow:0 8px 26px -8px var(--ac)}
+@media(max-width:700px){.tb-top{grid-template-columns:1fr}.chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.chips button{flex:none}}
+
+/* the cars: no boxes, only 3D floor shadows */
+.grid{max-width:1320px;margin:0 auto;padding:0 clamp(1rem,3vw,3rem) 9rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:5rem 2.2rem;perspective:1500px}
+.unit{--c:#fff;opacity:0;transform:translateY(80px) translateZ(-240px) rotateX(22deg);transition:opacity .9s,transform 1.2s var(--out),filter .5s}
+.unit.in{opacity:1;transform:none}
+.unit.gone{display:none}
+.grid:has(.unit.in:hover) .unit.in:not(:hover){opacity:.45;filter:saturate(.4) blur(1px)}
+.hit{all:unset;display:block;width:100%;cursor:pointer;box-sizing:border-box}
+.hit:focus-visible{outline:2px solid var(--c);outline-offset:8px;border-radius:12px}
+.pad{position:relative;display:grid;place-items:end center;aspect-ratio:16/10;transform-style:preserve-3d;
+  transform:rotateX(calc(var(--rx,0deg) + var(--v,0) * 1deg)) rotateY(var(--ry,0deg));transition:transform .6s var(--out)}
+.pad img{position:relative;z-index:2;width:92%;max-height:100%;object-fit:contain;filter:drop-shadow(0 20px 18px rgba(0,0,0,.5));
+  animation:bob 6s ease-in-out infinite;animation-delay:calc(var(--k) * -.8s);transition:transform .7s var(--out),filter .7s}
+.hit:hover .pad img{transform:translateZ(70px) translateY(-14px) scale(1.08);filter:drop-shadow(0 34px 34px color-mix(in srgb,var(--c) 45%,transparent))}
+@keyframes bob{50%{translate:0 -9px}}
+.shd{position:absolute;z-index:1;left:6%;right:6%;bottom:-1%;height:16%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.9),transparent 70%);filter:blur(9px);
+  translate:calc(var(--sx,0) * 1px) 0;animation:shdw 6s ease-in-out infinite;animation-delay:calc(var(--k) * -.8s);transition:scale .7s var(--out),opacity .7s,translate .4s}
+.shd::after{content:"";position:absolute;inset:25% 8%;border-radius:50%;background:var(--c);filter:blur(26px);opacity:0;transition:opacity .6s}
+.hit:hover .shd{scale:1.18 1.3}.hit:hover .shd::after{opacity:.4}
+@keyframes shdw{50%{scale:.86 .78;opacity:.7}}
+.meta{display:grid;gap:.3rem;margin-top:1.1rem}
+.meta small{font-size:.72rem;font-weight:600;letter-spacing:.26em;color:var(--steel)}
+.meta b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(1.7rem,2.4vw,2.2rem);letter-spacing:.02em;line-height:1.05;color:#eceef2;transition:color .3s}
+.hit:hover .meta b{color:var(--c)}
+.ln2{display:block;height:2px;width:34px;background:var(--c);transition:width .6s var(--out);margin:.35rem 0}
+.hit:hover .ln2{width:100%}
+.row{display:flex;justify-content:space-between;align-items:center;gap:.8rem}
+.pr{font-family:Anton,Impact,sans-serif;font-size:1.5rem;letter-spacing:.03em;color:#fff}
+.pr i{font-style:normal;font-family:Barlow,sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.2em;color:var(--steel);margin-right:.45rem}
+.pr em{font-style:normal;font-family:Barlow,sans-serif;font-size:.85rem;color:var(--steel);margin-left:.3rem}
+.tg{font-size:.64rem;font-weight:700;letter-spacing:.16em;padding:.3rem .65rem;border-radius:99px;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 60%,transparent);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.empty{grid-column:1/-1;text-align:center;color:var(--steel);padding:4rem 0;font-size:1.1rem;letter-spacing:.06em}
+
+/* scene 2: portrait video, blurred full-bleed + sharp centre */
+.s2{position:relative;height:100vh;height:100svh;overflow:hidden;background:#000}
+.s2w{position:absolute;inset:0;clip-path:inset(50% 0 50% 0);transition:clip-path 1.7s var(--io)}
+.s2.in .s2w{clip-path:inset(0)}
+.s2 video{position:absolute;object-fit:cover}
+.s2 .bgv2{inset:0;width:100%;height:100%;filter:blur(30px) brightness(.5) saturate(1.2);transform:scale(1.25)}
+.s2 .fgv{left:50%;top:0;height:100%;width:auto;aspect-ratio:828/1624;translate:-50% 0;transform:scale(1.3);transition:transform 6s var(--out);
+  -webkit-mask:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+.s2.in .fgv{transform:scale(1)}
+.s2shade{position:absolute;inset:0;background:linear-gradient(rgba(11,12,15,.9),transparent 22%,transparent 60%,rgba(11,12,15,.92)),radial-gradient(70% 60% at 50% 50%,transparent,rgba(0,0,0,.55))}
+.s2c{position:absolute;inset:0;z-index:3;display:grid;place-content:center;text-align:center;padding:0 5vw;mix-blend-mode:normal}
+.s2c .big{font-size:clamp(2.8rem,9vw,8rem)}
+.s2c .acts{display:flex;gap:14px;justify-content:center;margin-top:2rem;flex-wrap:wrap}
+@media(max-aspect-ratio:4/5){.s2 .bgv2{display:none}.s2 .fgv{left:0;translate:none;width:100%;height:100%;-webkit-mask:none;mask:none;aspect-ratio:auto}}
+.foot{padding:3rem clamp(1rem,4vw,4rem);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;color:var(--steel);font-size:.85rem;letter-spacing:.1em;background:#08090b;border-top:1px solid var(--edge)}
+.foot b{font-family:Anton,Impact,sans-serif;font-weight:400;color:#fff;letter-spacing:.06em;font-size:1.2rem}
+.foot a{color:var(--steel);text-decoration:none;margin-left:1.4rem}.foot a:hover{color:#fff}
+
+/* vault: full-version car view */
+.vault{position:fixed;inset:0;z-index:80;visibility:hidden;opacity:0;transition:opacity .6s,visibility 0s .7s;
+  background:radial-gradient(80% 70% at 30% 45%,color-mix(in srgb,var(--c,#555) 26%,rgba(14,15,18,.8)),rgba(8,9,11,.92));backdrop-filter:blur(20px) saturate(130%);-webkit-backdrop-filter:blur(20px) saturate(130%)}
+.vault.open{visibility:visible;opacity:1;transition:opacity .6s}
+.v-grid{position:relative;height:100%;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:2rem;padding:5.5rem clamp(1rem,4vw,4rem) 8.5rem}
+.v-ghost{position:absolute;left:0;right:0;top:50%;translate:0 -64%;text-align:center;font-family:Anton,Impact,sans-serif;font-size:min(15vw,26vh);line-height:.9;color:rgba(255,255,255,.07);white-space:nowrap;pointer-events:none;
+  transform:translateX(var(--gx,0));transition:transform 1s var(--out)}
+.v-car{position:relative;display:grid;place-items:center;perspective:1500px;height:100%}
+.v-car img{position:relative;z-index:2;max-width:100%;object-fit:contain;opacity:0;filter:drop-shadow(0 40px 40px rgba(0,0,0,.6));
+  transform:rotateX(var(--vrx,0deg)) rotateY(var(--vry,0deg));transition:transform .5s var(--out)}
+.v-car img.ready{opacity:1}
+.v-glow{position:absolute;left:10%;right:10%;bottom:16%;height:22%;background:var(--c);filter:blur(80px);opacity:.28;border-radius:50%}
+.v-shd{position:absolute;left:12%;right:12%;bottom:15%;height:7%;background:radial-gradient(ellipse,rgba(0,0,0,.9),transparent 70%);filter:blur(10px);translate:calc(var(--vry,0deg) * -1.4) 0;animation:shdw 5s ease-in-out infinite}
+.v-fall{opacity:0;transform:translateX(70px)}
+.v-fall.go{opacity:1;transform:none;transition:opacity .7s,transform .8s var(--out)}
+.v-panel{max-height:100%;overflow:auto;padding-right:.6rem;scrollbar-width:thin}
+.vi{opacity:0;translate:0 30px;transition:opacity .5s,translate .5s}
+.vault.open .vi{opacity:1;translate:0 0;transition:opacity .9s var(--out),translate .9s var(--out);transition-delay:calc(var(--k) * 80ms + .45s)}
+.v-cat{font-size:.78rem;font-weight:700;letter-spacing:.3em;color:var(--c)}
+.v-badge{margin-left:.8rem}
+.v-panel small{display:block;margin-top:.9rem;font-size:.9rem;letter-spacing:.34em;color:var(--steel)}
+.v-panel h2{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(2.6rem,5vw,4.6rem);line-height:.98;letter-spacing:.02em;margin-top:.2rem}
+.pl{display:flex;align-items:baseline;gap:.6rem;margin:1rem 0}
+.pl b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:2.6rem;color:var(--c)}
+.pl span{color:var(--steel);letter-spacing:.1em}
+.v-panel p{color:#c3c7cf;line-height:1.65;max-width:56ch}
+.vspecs{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.4rem 0;padding:1rem 0;border-block:1px solid var(--edge)}
+.vspecs div{display:grid;gap:.15rem}
+.vspecs b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.5rem;letter-spacing:.03em}
+.vspecs span{font-size:.66rem;letter-spacing:.2em;color:var(--steel)}
+.vspecs .wide{grid-column:1/-1;font-size:.85rem;color:#c3c7cf;letter-spacing:.05em}
+.planner{padding:1.2rem;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid var(--edge);display:grid;gap:1rem}
+.pl-row{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:end}
+.planner label,.planner .stp>span{display:grid;gap:.4rem;font-size:.66rem;font-weight:700;letter-spacing:.22em;color:var(--steel)}
+.planner input[type=date]{height:48px;padding:0 .9rem;border-radius:12px;background:rgba(0,0,0,.4);border:1px solid var(--edge);color:#fff;font:600 15px Barlow,sans-serif;color-scheme:dark}
+.planner input:focus{outline:0;border-color:var(--c)}
+.stp{display:grid;gap:.4rem}
+.stp div{display:flex;align-items:center;height:48px;border-radius:12px;background:rgba(0,0,0,.4);border:1px solid var(--edge)}
+.stp button{width:44px;height:100%;font-size:1.3rem;color:#fff;transition:.2s}.stp button:hover{color:var(--c)}
+.stp output{min-width:2.4ch;text-align:center;font-family:Anton,Impact,sans-serif;font-size:1.4rem}
+.dchips button{font-size:12px;padding:.45rem .85rem}
+.pl-ret{font-size:.85rem;color:var(--steel);letter-spacing:.06em}.pl-ret b{color:#fff}
+.calc{display:grid;gap:.45rem;font-size:.92rem;color:#b9bec8}
+.calc div{display:flex;justify-content:space-between}
+.calc .tot{margin-top:.4rem;padding-top:.7rem;border-top:1px solid var(--edge);color:#fff;font-family:Anton,Impact,sans-serif;font-size:1.5rem;letter-spacing:.04em}
+.calc .tot dd{color:var(--c)}
+.v-close,.v-nav{position:absolute;z-index:6;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid var(--edge);color:#fff;transition:.3s}
+.v-close{top:max(18px,env(safe-area-inset-top));right:clamp(14px,3vw,40px);width:48px;height:48px;font-size:1.1rem}
+.v-close:hover{background:var(--c,#fff);color:#0b0c0e;rotate:90deg}
+.v-nav{top:50%;width:52px;height:52px;font-size:1.6rem}.v-nav.l{left:clamp(10px,2vw,30px)}.v-nav.r{right:clamp(10px,2vw,30px)}
+.v-nav:hover{background:var(--c,#fff);color:#0b0c0e}
+.fly{position:fixed;z-index:95;margin:0;transform-origin:0 0;pointer-events:none;filter:drop-shadow(0 30px 30px rgba(0,0,0,.5))}
+.arsenal.focus .unit.in:not(.sel){scale:.9;opacity:.4}
+.unit{scale:1}
+.unit.sel .pad img{visibility:hidden}
+@media(max-width:900px){
+  .v-grid{grid-template-columns:1fr;align-items:start;padding:4.5rem 1rem 9.5rem;overflow:auto;gap:0}
+  .v-car{height:34vh}.v-panel{overflow:visible}.vspecs{grid-template-columns:repeat(2,1fr)}
+  .v-nav{top:22vh}.v-ghost{font-size:20vw;translate:0 -140%}
+}
+
+/* dock: the small selection section */
+.dock{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));translate:-50% 160%;z-index:90;display:flex;align-items:center;gap:1.1rem;padding:.65rem .7rem .65rem 1rem;border-radius:22px;max-width:calc(100% - 1.4rem);
+  background:rgba(22,24,29,.72);border:1px solid var(--edge);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 30px 80px rgba(0,0,0,.6),0 0 60px -10px var(--ac);
+  visibility:hidden;transition:translate .9s var(--out),visibility 0s .9s}
+.dock.show{translate:-50% 0;visibility:visible;transition:translate .9s var(--out),visibility 0s}
+.dock img{width:92px;height:56px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(0,0,0,.6))}
+.k-info{display:grid;gap:.15rem;min-width:0}.k-info b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.25rem;letter-spacing:.03em;white-space:nowrap}
+.k-info span{font-size:.8rem;color:var(--steel);white-space:nowrap}
+.k-tot{display:grid;text-align:right;padding-left:1rem;border-left:1px solid var(--edge)}.k-tot small{font-size:.62rem;letter-spacing:.22em;color:var(--steel)}
+.k-tot b{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.4rem;color:var(--ac);white-space:nowrap}
+.dock .btn{padding:12px 22px}
+.k-x{width:34px;height:34px;border-radius:50%;color:var(--steel);transition:.3s}.k-x:hover{background:rgba(255,255,255,.12);color:#fff}
+@media(max-width:760px){.dock{gap:.6rem;padding:.55rem}.dock img,.k-info span{display:none}.k-tot{padding-left:.6rem}.dock .btn{padding:11px 14px;font-size:13px}}
+
+/* contract + rent sheet */
+.sheet{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:1rem;background:rgba(5,6,8,.7);backdrop-filter:blur(10px);visibility:hidden;opacity:0;transition:opacity .45s,visibility 0s .45s}
+.sheet.open{visibility:visible;opacity:1;transition:opacity .45s}
+.paper{position:relative;width:min(720px,100%);max-height:92vh;overflow:auto;padding:2.2rem;border-radius:26px;background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),#14161a;border:1px solid var(--edge);box-shadow:0 50px 120px rgba(0,0,0,.7);
+  transform:translateY(40px) scale(.96) rotateX(8deg);transition:transform .7s var(--out)}
+.sheet.open .paper{transform:none}
+.paper h3{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:2rem;letter-spacing:.04em}
+.paper .ref{color:var(--steel);font-size:.8rem;letter-spacing:.14em;margin:.2rem 0 1.4rem}
+.paper table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95rem}
+.paper td{padding:.55rem 0;border-bottom:1px solid var(--edge)}.paper td:last-child{text-align:right;font-weight:600}
+.paper ol{padding-left:1.2rem;color:#b9bec8;line-height:1.6;font-size:.9rem;display:grid;gap:.35rem}
+.paper .acts{display:flex;gap:12px;margin-top:1.6rem;flex-wrap:wrap}
+.paper .sigs{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem;font-size:.75rem;letter-spacing:.16em;color:var(--steel)}.paper .sigs div{border-top:1px solid var(--steel);padding-top:.4rem}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin:1rem 0}.fgrid label{display:grid;gap:.4rem;font-size:.66rem;font-weight:700;letter-spacing:.22em;color:var(--steel)}.fgrid .full{grid-column:1/-1}
+.fgrid input{height:48px;padding:0 .9rem;border-radius:12px;background:rgba(0,0,0,.4);border:1px solid var(--edge);color:#fff;font:500 15px Barlow,sans-serif}.fgrid input:focus{outline:0;border-color:var(--ac)}
+.fgrid input.bad{border-color:#ff4d4d}
+.ok{display:grid;place-items:center;text-align:center;gap:.8rem;padding:1.5rem 0}
+.ok svg{width:84px;height:84px;fill:none;stroke:var(--ac);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ok circle{stroke-dasharray:260;stroke-dashoffset:260;animation:dash 1s var(--io) forwards}.ok path{stroke-dasharray:60;stroke-dashoffset:60;animation:dash .6s .7s var(--io) forwards}
+@keyframes dash{to{stroke-dashoffset:0}}
+.ok code{font-family:Anton,Impact,sans-serif;font-size:1.6rem;letter-spacing:.12em;color:var(--ac)}
+@media(max-width:600px){.fgrid{grid-template-columns:1fr}.paper{padding:1.4rem}}
+@media print{body>*:not(.sheet){display:none!important}html,body{overflow:visible!important;background:#fff!important}
+  .sheet{position:static;visibility:visible;opacity:1;display:block;background:none;backdrop-filter:none;padding:0}
+  .paper{background:#fff;color:#000;box-shadow:none;border:0;max-height:none;overflow:visible;transform:none}.paper *{color:#000!important;border-color:#999!important}.paper .acts,.v-close{display:none!important}}
+@media(prefers-reduced-motion:reduce){.unit{transform:none;opacity:1}.ln>span{transform:none}[data-at]:not(.ln){opacity:1;translate:0 0}.vbg,.s2w{clip-path:none}}
+
+.vault .chips button.on,.sheet .chips button.on{background:var(--c,var(--ac));border-color:var(--c,var(--ac));box-shadow:0 8px 26px -8px var(--c,var(--ac))}
+.dock .btn{white-space:nowrap}.k-info b{overflow:hidden;text-overflow:ellipsis;max-width:230px}
+.tb{scroll-margin-top:100px}
+.v-panel h2{font-size:clamp(2.2rem,4vw,3.6rem)}.v-panel{-webkit-mask:linear-gradient(#000 92%,transparent);mask:linear-gradient(#000 92%,transparent);padding-bottom:2rem}
+.s2{--ac:#f59e0b}
+
+</style>
+</head>
+<body>
+<main class="stage" id="stage">
+  <video class="bgv" id="bgv" muted loop playsinline autoplay preload="auto" aria-hidden="true"><source src="faces.mp4" type="video/mp4"></video>
+  <div class="grain"></div><div class="spot"></div><div class="glow"></div><div class="floor"></div>
+
+  <header class="top">
+    <a class="logo" href="car.html" style="text-decoration:none">VANGUARD<i>.</i></a>
+    <nav aria-label="Main"><a href="car.html">Home</a><a href="#arsenal" data-go="#arsenal" aria-current="page">Fleet</a><a href="car.html#main-footer">Contact</a></nav>
+  </header>
+
+  <div id="slides"></div>
+  <div class="streaks" id="streaks"></div>
+
+  <button class="arrow l" id="prev" aria-label="Previous car"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button class="arrow r" id="next" aria-label="Next car"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+
+  <div class="cta">
+    <a class="btn fill" id="rent" href="booking.html">Rent now</a>
+    <button class="btn ghost" id="det" aria-expanded="false" aria-controls="drawer">Details</button>
+  </div>
+
+  <a class="cue" href="#arsenal" aria-label="Scroll to the arsenal">THE ARSENAL · 45</a>
+  <div class="dots" id="dots" role="tablist" aria-label="Choose car"></div>
+  <div class="count" id="count"></div>
+  <div class="social">
+    <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6"/></svg></a>
+    <a href="#" aria-label="X"><svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg></a>
+    <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="4"/><path d="M10 9.5v5l4.5-2.5z"/></svg></a>
+  </div>
+
+  <aside class="drawer" id="drawer" aria-label="Car details">
+    <button class="x" id="close" aria-label="Close details"><svg width="14" height="14" viewBox="0 0 14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
+    <div class="tag" id="d-tag"></div>
+    <h2 id="d-name"></h2>
+    <p id="d-desc"></p>
+    <div class="specs" id="d-specs"></div>
+    <div class="price"><b id="d-price"></b><span>SAR / day</span></div>
+  </aside>
+</main>
+
+<section class="arsenal" id="arsenal">
+  <div class="vbg"><video id="v1" muted loop playsinline preload="auto" poster="videos/first.jpg" aria-hidden="true"><source src="first.mp4" type="video/mp4"></video><div class="vshade"></div></div>
+  <div class="s1">
+    <div><span class="eyebrow" data-at="0.8">THE ARSENAL</span></div>
+    <h2 class="big"><span class="ln" data-at="1.5"><span>45 machines.</span></span><span class="ln" data-at="2.3"><span class="hl">One command.</span></span></h2>
+    <p class="lead" data-at="3.4">From desert-ready V8 giants to hand-built luxury. Pick a legend, lock your dates, drive.</p>
+  </div>
+  <div class="fleet" id="fleet">
+    <div class="tb">
+      <div class="tb-top">
+        <label class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Search brand or model: Toyota, Land Cruiser, V8..." autocomplete="off" aria-label="Search cars"></label>
+        <label class="sel"><select id="brandSel" aria-label="Brand"></select></label>
+        <span class="cnt" id="cnt"></span>
+      </div>
+      <div class="chips" id="sortChips" role="group" aria-label="Sort"><span>SORT</span>
+        <button class="on" data-v="wanted">Most wanted</button><button data-v="rented">Most rented</button><button data-v="low">Price: low to high</button><button data-v="high">Price: high to low</button><button data-v="az">Brand A-Z</button></div>
+      <div class="chips" id="catChips" role="group" aria-label="Category"><span>TYPE</span>
+        <button class="on" data-v="All">All</button><button data-v="Sports">Sports</button><button data-v="Luxury">Luxury</button><button data-v="SUV">SUV</button><button data-v="Sedan">Sedan</button><button data-v="Pickup">Pickup</button></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="s2" id="beyond"><div class="s2w">
+  <video class="bgv2" id="v2a" muted loop playsinline preload="auto" poster="second.jpg" aria-hidden="true"><source src="second.mp4" type="video/mp4"></video>
+  <video class="fgv" id="v2b" muted loop playsinline preload="auto" poster="second.jpg" aria-hidden="true"><source src="second.mp4" type="video/mp4"></video>
+  <div class="s2shade"></div>
+  <div class="s2c">
+    <div><span class="eyebrow" data-at="0.6">BEYOND THE ORDINARY</span></div>
+    <h2 class="big"><span class="ln" data-at="2.0"><span>No limits.</span></span><span class="ln" data-at="3.4"><span class="hl">No excuses.</span></span></h2>
+    <p class="lead" data-at="5.0">Any road. Any engine. Fully insured, delivered to your door.</p>
+    <div class="acts" data-at="6.2"><a class="btn fill" href="#arsenal" data-go="#arsenal" style="--ac:#f59e0b">Browse the arsenal</a><a class="btn ghost" href="car.html#main-footer">Contact us</a></div>
+  </div>
+</div></section>
+<footer class="foot"><div><b>VANGUARD</b> &nbsp; Prices in SAR per day, excluding VAT until checkout.</div><div><a href="car.html">Home</a><a href="#arsenal" data-go="#arsenal">Fleet</a><a href="car.html#main-footer">Contact</a></div></footer>
+
+<div class="vault" id="vault" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vehicle details">
+  <button class="v-close" id="vClose" aria-label="Close">&#10005;</button>
+  <button class="v-nav l" id="vPrev" aria-label="Previous car">&#8249;</button><button class="v-nav r" id="vNext" aria-label="Next car">&#8250;</button>
+  <div class="v-grid">
+    <div class="v-car" id="vCar"><div class="v-ghost" id="vGhost"></div><div class="v-glow"></div><div class="v-shd"></div><img id="vImg" alt="" draggable="false"></div>
+    <div class="v-panel">
+      <div class="vi" style="--k:0"><span class="v-cat" id="vCat"></span><span class="v-badge" id="vBadge"></span></div>
+      <div class="vi" style="--k:1"><small id="vBrand"></small><h2 id="vModel"></h2></div>
+      <div class="vi pl" style="--k:2"><b id="vPrice"></b><span>SAR / DAY</span></div>
+      <p class="vi" style="--k:3" id="vDesc"></p>
+      <div class="vi vspecs" style="--k:4" id="vSpecs"></div>
+      <div class="vi planner" style="--k:5">
+        <div class="pl-row"><label>PICK-UP DATE<input type="date" id="pDate"></label><div class="stp"><span>DAYS</span><div><button type="button" id="dm" aria-label="Fewer days">&minus;</button><output id="dn">3</output><button type="button" id="dp" aria-label="More days">+</button></div></div></div>
+        <div class="chips dchips" id="dChips"><button data-d="1">1 day</button><button data-d="3">3</button><button data-d="7">7 &middot; -10%</button><button data-d="14">14</button><button data-d="30">30 &middot; -25%</button></div>
+        <div class="pl-ret">RETURN &nbsp;<b id="pRet"></b></div>
+        <dl class="calc"><div><dt>Subtotal</dt><dd id="cSub"></dd></div><div id="cDiscRow"><dt>Long-rental discount</dt><dd id="cDisc"></dd></div><div><dt>VAT 15%</dt><dd id="cVat"></dd></div><div class="tot"><dt>Total</dt><dd id="cTot"></dd></div></dl>
+      </div>
+    </div>
+  </div>
+</div>
+
+<aside class="dock" id="dock" aria-label="Your selection">
+  <img id="kImg" alt=""><div class="k-info"><b id="kName"></b><span id="kLine"></span></div>
+  <div class="k-tot"><small>TOTAL</small><b id="kTot"></b></div>
+  <button class="btn ghost" id="bContract">Contract</button><button class="btn fill" id="bRent">Rent now</button>
+  <button class="k-x" id="kX" aria-label="Clear selection">&#10005;</button>
+</aside>
+<div class="sheet" id="sheet" aria-hidden="true"><div class="paper" role="dialog" aria-modal="true"><button class="v-close" id="sClose" aria-label="Close">&#10005;</button><div id="sBody"></div></div></div>
+<div class="cur" id="cur"></div>
+<div class="wipe" id="wipe"></div>
+
+<script>
+/* Specs are marketing-level approximations: confirm against your actual fleet before launch. */
+const CARS=[
+ {brand:"BMW",model:"M4",slug:"bmw-m4",s:1,img:"bmw2023-m4.png",ac:"#e4f21c",tag:"Sport coupe",price:1450,
+  desc:"Loud colour, louder intent. The M4 pairs a twin-turbo inline-six with rear-drive balance and steering that answers before you finish the thought. Pick it for night drives and the moments you want the road to feel small.",
+  hp:503,acc:3.5,top:250,seats:4,engine:"3.0L twin-turbo I6"},
+ {brand:"MERCEDES-AMG",model:"C 63",slug:"amg-c63",s:1.2,img:"mercedes-amg-c-class2025.png",ac:"#ff3b3b",tag:"Performance sedan",price:1900,
+  desc:"A sedan in a tailored suit with a hybrid hammer underneath. Electric torque fills in the instant you press, all-wheel drive plants it, and the black-on-black AMG face does the talking. Quiet in the city, brutal when asked.",
+  hp:671,acc:3.4,top:280,seats:5,engine:"2.0L turbo hybrid"},
+ {brand:"CHANGAN",model:"HUNTER",slug:"changan-hunter",s:1.2,img:"changan_hunter2026.png",ac:"#3d7bff",tag:"4x4 pickup",price:520,
+  desc:"Built to work and built to be seen. A double cab with a wide stance, 4x4 grip and a bed that takes the gear. Take it to desert tracks, job sites and weekend convoys without thinking twice.",
+  hp:230,acc:9.0,top:180,seats:5,engine:"2.0L turbo, 4x4"},
+ {brand:"DODGE",model:"CHALLENGER",slug:"dodge-challenger",s:1.25,img:"dodge2026.png",ac:"#ff7a1a",tag:"Muscle coupe",price:1700,
+  desc:"American muscle with the volume up. A supercharged V8, widebody shoulders and red-ringed brakes make this the most straight-line violence a rental can offer. You will hear it before you see it.",
+  hp:717,acc:3.6,top:320,seats:5,engine:"6.2L supercharged V8"},
+ {brand:"JEEP",model:"COMPASS",slug:"jeep-compass",s:1.2,img:"jeep-compass_2026.png",ac:"#8be02a",tag:"Compact SUV",price:430,
+  desc:"The sharp-dressed all-rounder. Raised ride, confident grip and a lime finish that stands out in any parking lot. Easy in the city, ready when the tarmac ends, with room for five and their bags.",
+  hp:200,acc:8.5,top:200,seats:5,engine:"2.0L turbo, 4x4"}
+];
+const MAX={hp:720,acc:10,top:330,seats:7};
+const $=s=>document.querySelector(s), n=CARS.length;
+const root_lock=()=>document.documentElement.classList.contains("lock");
+const stage=$("#stage"), slidesEl=$("#slides");
+let cur=0, locked=false;
+
+const chars=(t)=>[...t].map((c,i)=>`<b style="--i:${i}">${c===" "?"&nbsp;":c}</b>`).join("");
+slidesEl.innerHTML=CARS.map(c=>`<section class="slide" aria-label="${c.brand} ${c.model}">
+  <div class="name"><div class="brand">${chars(c.brand)}</div><div class="model">${chars(c.model)}</div></div>
+  <div class="car"><div class="car-in"><img style="--s:${c.s||1}" src="${c.img}" alt="${c.brand} ${c.model}" draggable="false"></div></div></section>`).join("");
+const slides=[...document.querySelectorAll(".slide")];
+$("#dots").innerHTML=CARS.map((c,i)=>`<button role="tab" aria-label="${c.brand} ${c.model}" data-i="${i}"></button>`).join("");
+const dots=[...document.querySelectorAll("#dots button")];
+
+function rel(i){let o=i-cur;if(o>n/2)o-=n;if(o<-n/2)o+=n;return o}
+function render(dir=1){
+  slides.forEach((s,i)=>{const o=rel(i);s.style.setProperty("--o",o);s.classList.toggle("on",o===0);s.classList.toggle("near",Math.abs(o)<=1);s.setAttribute("aria-hidden",o!==0)});
+  dots.forEach((d,i)=>{d.classList.toggle("on",i===cur);d.setAttribute("aria-selected",i===cur)});
+  const c=CARS[cur];
+  stage.style.setProperty("--ac",c.ac);
+  $("#count").innerHTML=`<b>${String(cur+1).padStart(2,"0")}</b> / ${String(n).padStart(2,"0")}`;
+  $("#rent").href=`booking.html?car=${c.slug}`;
+  fillDrawer(c);
+  const st=$("#streaks");st.style.setProperty("--dir",dir);st.classList.remove("go");void st.offsetWidth;st.classList.add("go");
+}
+function go(to,dir){
+  if(locked||to===cur)return;locked=true;
+  dir=dir||(rel(to)>0?1:-1);cur=(to+n)%n;render(dir);setTimeout(()=>locked=false,850);
+}
+const step=d=>go(cur+d,d);
+
+/* ---------- details drawer ---------- */
+function fillDrawer(c){
+  $("#d-tag").textContent=c.tag;$("#d-name").textContent=`${c.brand} ${c.model}`;$("#d-desc").textContent=c.desc;$("#d-price").textContent=c.price.toLocaleString("en-US");
+  const rows=[["Power",c.hp,"hp",c.hp/MAX.hp],["0 to 100 km/h",c.acc,"s",1-(c.acc-3)/8],["Top speed",c.top,"km/h",c.top/MAX.top],["Seats",c.seats,"",c.seats/MAX.seats],["Engine",c.engine,"",null]];
+  $("#d-specs").innerHTML=rows.map(r=>r[3]===null?`<div class="spec"><span>${r[0]}</span><strong>${r[1]}</strong></div>`:
+   `<div class="spec"><span>${r[0]}</span><strong data-n="${r[1]}" data-u="${r[2]}">${r[1]} ${r[2]}</strong><div class="bar"><i style="--v:${Math.max(8,r[3]*100).toFixed(0)}"></i></div></div>`).join("");
+}
+function countUp(){
+  document.querySelectorAll("[data-n]").forEach(el=>{const to=+el.dataset.n,u=el.dataset.u,dec=String(to).includes(".")?1:0,t0=performance.now();
+    (function f(t){const p=Math.min(1,(t-t0)/1100),e=1-Math.pow(1-p,3);el.textContent=(to*e).toFixed(dec)+" "+u;if(p<1)requestAnimationFrame(f)})(t0)});
+}
+function toggle(open){
+  open=open??!stage.classList.contains("det");
+  stage.classList.toggle("det",open);$("#det").setAttribute("aria-expanded",open);$("#det").textContent=open?"Close":"Details";
+  if(open)countUp();
+}
+$("#det").onclick=()=>toggle();$("#close").onclick=()=>toggle(false);
+
+/* ---------- input ---------- */
+$("#next").onclick=()=>step(1);$("#prev").onclick=()=>step(-1);
+dots.forEach(d=>d.onclick=()=>go(+d.dataset.i));
+addEventListener("keydown",e=>{if(root_lock()||scrollY>innerHeight*.5)return;if(e.key==="ArrowRight")step(1);else if(e.key==="ArrowLeft")step(-1);else if(e.key==="Escape")toggle(false)});
+let sx=null;
+stage.addEventListener("pointerdown",e=>{if(e.target.closest("button,a,aside"))return;sx=e.clientX});
+addEventListener("pointerup",e=>{if(sx===null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>60)step(d<0?1:-1)});
+
+/* ---------- 3D tilt + spotlight + cursor (smoothed) ---------- */
+let tx=0,ty=0,cx=0,cy=0,px=innerWidth/2,py=innerHeight/2;const cursor=$("#cur");
+addEventListener("pointermove",e=>{tx=e.clientX/innerWidth-.5;ty=e.clientY/innerHeight-.5;px=e.clientX;py=e.clientY;
+  stage.style.setProperty("--mx",px+"px");stage.style.setProperty("--my",py+"px")});
+document.querySelectorAll("button,a").forEach(el=>{el.addEventListener("pointerenter",()=>cursor.classList.add("big"));el.addEventListener("pointerleave",()=>cursor.classList.remove("big"))});
+(function loop(){
+  cx+=(tx-cx)*.07;cy+=(ty-cy)*.07;
+  stage.style.setProperty("--tx",cx.toFixed(3));stage.style.setProperty("--ty",cy.toFixed(3));
+  stage.style.setProperty("--ry",(cx*16).toFixed(2)+"deg");stage.style.setProperty("--rx",(cy*-8).toFixed(2)+"deg");
+  cursor.style.transform=`translate(${px}px,${py}px)`;
+  requestAnimationFrame(loop)})();
+
+/* ---------- optional hero video: drop hero.mp4 next to this file ---------- */
+const v=$("#bgv");v.addEventListener("loadeddata",()=>{v.classList.add("ok");v.play().catch(()=>{})});
+
+render(1);
+
+/* shared page wipe: cover on leave, reveal on arrive */
+(()=>{const w=document.getElementById('wipe');if(!w)return;
+ if(sessionStorage.getItem('wipe')){sessionStorage.removeItem('wipe');w.classList.add('hold');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{w.classList.remove('hold');w.classList.add('out')}))}
+ document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||a.target)return;
+  const u=a.getAttribute('href');if(!/^(car|carts|booking)\.html(#.*)?$/.test(u))return;
+  e.preventDefault();sessionStorage.setItem('wipe','1');w.classList.add('cover');setTimeout(()=>location.href=u,520)});
+ addEventListener('pageshow',e=>{if(e.persisted){w.className='wipe'}})})();
+</script>
+<script>
+/* ===== FLEET DATA: edit prices, specs and descriptions here ===== */
+/* 45-vehicle fleet. Edit prices, specs and descriptions here. */
+const FLEET=[
+ {
+  "slug": "g-class",
+  "img": "Gclass-2024.png",
+  "brand": "Mercedes-Benz",
+  "model": "G 63 AMG",
+  "cat": "Luxury",
+  "price": 2600,
+  "hp": 577,
+  "acc": 4.5,
+  "top": 220,
+  "seats": 5,
+  "engine": "4.0L twin-turbo V8",
+  "wanted": 97,
+  "rented": 310,
+  "ac": "#d9b25f",
+  "desc": "The boxy icon with a V8 snarl. Desert-ready, red-carpet-proud and impossible to ignore."
+ },
+ {
+  "slug": "bmw-m4",
+  "img": "bmw2023-m4.png",
+  "brand": "BMW",
+  "model": "M4 Competition",
+  "cat": "Sports",
+  "price": 1450,
+  "hp": 503,
+  "acc": 3.5,
+  "top": 250,
+  "seats": 4,
+  "engine": "3.0L twin-turbo I6",
+  "wanted": 93,
+  "rented": 420,
+  "ac": "#e4f21c",
+  "desc": "Neon-bright, twin-turbo and razor sharp. The weekend weapon for drivers who want steering that talks back."
+ },
+ {
+  "slug": "bmw-5",
+  "img": "bmw5-2024.png",
+  "brand": "BMW",
+  "model": "5 Series",
+  "cat": "Sedan",
+  "price": 950,
+  "hp": 258,
+  "acc": 6.2,
+  "top": 250,
+  "seats": 5,
+  "engine": "2.0L turbo I4",
+  "wanted": 70,
+  "rented": 380,
+  "ac": "#9aa7ff",
+  "desc": "The executive's athlete: calm cabin, sharp handling and effortless highway pace."
+ },
+ {
+  "slug": "amg-c63",
+  "img": "mercedes-amg-c-class2025.png",
+  "brand": "Mercedes-AMG",
+  "model": "C 63 S",
+  "cat": "Sports",
+  "price": 1900,
+  "hp": 671,
+  "acc": 3.4,
+  "top": 280,
+  "seats": 5,
+  "engine": "2.0L turbo hybrid",
+  "wanted": 90,
+  "rented": 260,
+  "ac": "#ff3b3b",
+  "desc": "A hybrid hammer in a tailored suit. 671 hp, all-wheel drive and AMG theatre on demand."
+ },
+ {
+  "slug": "camry",
+  "img": "camry-2025.png",
+  "brand": "Toyota",
+  "model": "Camry",
+  "cat": "Sedan",
+  "price": 230,
+  "hp": 203,
+  "acc": 8.0,
+  "top": 210,
+  "seats": 5,
+  "engine": "2.5L I4",
+  "wanted": 85,
+  "rented": 1450,
+  "ac": "#9aa7ff",
+  "desc": "The rental favourite. Smooth, frugal and dependable for airport runs and long family hauls."
+ },
+ {
+  "slug": "cs35-plus",
+  "img": "changan_cs_350_plus2025.png",
+  "brand": "Changan",
+  "model": "CS35 Plus",
+  "cat": "SUV",
+  "price": 170,
+  "hp": 120,
+  "acc": 11,
+  "top": 175,
+  "seats": 5,
+  "engine": "1.6L I4",
+  "wanted": 45,
+  "rented": 520,
+  "ac": "#5cc8ff",
+  "desc": "Compact, high-riding and budget-smart. Easy city parking with a roomy trunk."
+ },
+ {
+  "slug": "eado",
+  "img": "changan_eado-2025.png",
+  "brand": "Changan",
+  "model": "Eado Plus",
+  "cat": "Sedan",
+  "price": 160,
+  "hp": 156,
+  "acc": 9.5,
+  "top": 200,
+  "seats": 5,
+  "engine": "1.4L turbo",
+  "wanted": 40,
+  "rented": 610,
+  "ac": "#9aa7ff",
+  "desc": "A sleek, tech-loaded sedan that punches above its daily rate."
+ },
+ {
+  "slug": "changan-hunter",
+  "img": "changan_hunter2026.png",
+  "brand": "Changan",
+  "model": "Hunter",
+  "cat": "Pickup",
+  "price": 520,
+  "hp": 230,
+  "acc": 9.0,
+  "top": 180,
+  "seats": 5,
+  "engine": "2.0L turbo, 4x4",
+  "wanted": 72,
+  "rented": 340,
+  "ac": "#3d7bff",
+  "desc": "Built to work and be seen. Double cab, 4x4 grip and a bed for the gear."
+ },
+ {
+  "slug": "tahoe",
+  "img": "chevrolete-taho2025.png",
+  "brand": "Chevrolet",
+  "model": "Tahoe",
+  "cat": "SUV",
+  "price": 750,
+  "hp": 355,
+  "acc": 7.0,
+  "top": 180,
+  "seats": 7,
+  "engine": "5.3L V8",
+  "wanted": 91,
+  "rented": 890,
+  "ac": "#f9364f",
+  "desc": "Full-size V8 presence with seven seats. The convoy king for family trips and VIP transfers."
+ },
+ {
+  "slug": "corolla",
+  "img": "corolla-2024.png",
+  "brand": "Toyota",
+  "model": "Corolla",
+  "cat": "Sedan",
+  "price": 180,
+  "hp": 169,
+  "acc": 9.5,
+  "top": 190,
+  "seats": 5,
+  "engine": "2.0L I4",
+  "wanted": 80,
+  "rented": 1680,
+  "ac": "#9aa7ff",
+  "desc": "The easy choice that never lets you down: fuel-sipping, comfortable and everywhere-ready."
+ },
+ {
+  "slug": "creta",
+  "img": "creta-2026.png",
+  "brand": "Hyundai",
+  "model": "Creta",
+  "cat": "SUV",
+  "price": 210,
+  "hp": 115,
+  "acc": 11.5,
+  "top": 180,
+  "seats": 5,
+  "engine": "1.5L I4",
+  "wanted": 77,
+  "rented": 1120,
+  "ac": "#5cc8ff",
+  "desc": "Compact crossover with a high seat and sharp looks. A smart daily-city pick."
+ },
+ {
+  "slug": "land-cruiser",
+  "img": "cruiser-2024.png",
+  "brand": "Toyota",
+  "model": "Land Cruiser 300",
+  "cat": "Luxury",
+  "price": 980,
+  "hp": 409,
+  "acc": 6.7,
+  "top": 210,
+  "seats": 7,
+  "engine": "3.5L twin-turbo V6",
+  "wanted": 96,
+  "rented": 1010,
+  "ac": "#d9b25f",
+  "desc": "The desert legend, modernised. A limousine cabin with capability that ends arguments."
+ },
+ {
+  "slug": "urban-cruiser",
+  "img": "cruiser-urban2025.png",
+  "brand": "Toyota",
+  "model": "Urban Cruiser",
+  "cat": "SUV",
+  "price": 240,
+  "hp": 103,
+  "acc": 12,
+  "top": 170,
+  "seats": 5,
+  "engine": "1.5L mild hybrid",
+  "wanted": 55,
+  "rented": 460,
+  "ac": "#f9364f",
+  "desc": "Pocket-sized adventurer with Toyota reliability. Light, nimble and thrifty."
+ },
+ {
+  "slug": "executive-sedan",
+  "img": "custom-Ai.png",
+  "brand": "Custom",
+  "model": "Executive Sedan",
+  "cat": "Luxury",
+  "price": 1100,
+  "hp": 340,
+  "acc": 5.8,
+  "top": 250,
+  "seats": 4,
+  "engine": "3.0L turbo V6",
+  "wanted": 50,
+  "rented": 210,
+  "ac": "#d9b25f",
+  "desc": "Black-tie discretion. A chauffeur-grade sedan for airport pickups and quiet arrivals."
+ },
+ {
+  "slug": "charger",
+  "img": "dodge2024.png",
+  "brand": "Dodge",
+  "model": "Charger",
+  "cat": "Sports",
+  "price": 800,
+  "hp": 370,
+  "acc": 5.0,
+  "top": 250,
+  "seats": 5,
+  "engine": "5.7L HEMI V8",
+  "wanted": 74,
+  "rented": 370,
+  "ac": "#ff4d2e",
+  "desc": "Four doors, V8 attitude. Muscle-car noise with room for the whole crew."
+ },
+ {
+  "slug": "dodge-challenger",
+  "img": "dodge2026.png",
+  "brand": "Dodge",
+  "model": "Challenger Hellcat",
+  "cat": "Sports",
+  "price": 1700,
+  "hp": 717,
+  "acc": 3.6,
+  "top": 320,
+  "seats": 5,
+  "engine": "6.2L supercharged V8",
+  "wanted": 88,
+  "rented": 290,
+  "ac": "#ff7a1a",
+  "desc": "American muscle at full volume. Supercharged V8, widebody stance, red-ringed brakes."
+ },
+ {
+  "slug": "ranger",
+  "img": "ford-2025.png",
+  "brand": "Ford",
+  "model": "Ranger",
+  "cat": "Pickup",
+  "price": 450,
+  "hp": 270,
+  "acc": 8.5,
+  "top": 180,
+  "seats": 5,
+  "engine": "2.3L EcoBoost",
+  "wanted": 60,
+  "rented": 480,
+  "ac": "#ff9f1c",
+  "desc": "Tough, modern pickup with serious towing and desert-trail confidence."
+ },
+ {
+  "slug": "explorer",
+  "img": "ford-explorer2026.png",
+  "brand": "Ford",
+  "model": "Explorer",
+  "cat": "SUV",
+  "price": 520,
+  "hp": 300,
+  "acc": 7.0,
+  "top": 210,
+  "seats": 7,
+  "engine": "2.3L EcoBoost",
+  "wanted": 68,
+  "rented": 560,
+  "ac": "#5cc8ff",
+  "desc": "Seven seats, strong turbo power and a calm, tech-rich cabin. A road-trip master."
+ },
+ {
+  "slug": "territory",
+  "img": "ford-teretory2025.png",
+  "brand": "Ford",
+  "model": "Territory",
+  "cat": "SUV",
+  "price": 260,
+  "hp": 143,
+  "acc": 10,
+  "top": 185,
+  "seats": 5,
+  "engine": "1.5L turbo",
+  "wanted": 52,
+  "rented": 540,
+  "ac": "#5cc8ff",
+  "desc": "Practical mid-size crossover with generous space at a friendly rate."
+ },
+ {
+  "slug": "jeep-compass",
+  "img": "jeep-compass_2026.png",
+  "brand": "Jeep",
+  "model": "Compass",
+  "cat": "SUV",
+  "price": 430,
+  "hp": 200,
+  "acc": 8.5,
+  "top": 200,
+  "seats": 5,
+  "engine": "2.0L turbo, 4x4",
+  "wanted": 66,
+  "rented": 420,
+  "ac": "#8be02a",
+  "desc": "The sharp-dressed all-rounder. Raised ride, 4x4 grip and a lime finish that stands out."
+ },
+ {
+  "slug": "grand-cherokee",
+  "img": "jeep_grand_cherokee2026.png",
+  "brand": "Jeep",
+  "model": "Grand Cherokee L",
+  "cat": "SUV",
+  "price": 690,
+  "hp": 293,
+  "acc": 8.0,
+  "top": 210,
+  "seats": 7,
+  "engine": "3.6L V6",
+  "wanted": 75,
+  "rented": 350,
+  "ac": "#5cc8ff",
+  "desc": "Three rows of premium comfort with real Jeep capability."
+ },
+ {
+  "slug": "wrangler",
+  "img": "jeep_wrangler2024.png",
+  "brand": "Jeep",
+  "model": "Wrangler Rubicon",
+  "cat": "SUV",
+  "price": 650,
+  "hp": 285,
+  "acc": 7.5,
+  "top": 160,
+  "seats": 4,
+  "engine": "3.6L V6",
+  "wanted": 86,
+  "rented": 460,
+  "ac": "#f9364f",
+  "desc": "Open-air off-road legend. Doors off, tyres up, nothing stops it in the dunes."
+ },
+ {
+  "slug": "dashing",
+  "img": "jtoure_dashing2026-.png",
+  "brand": "Jetour",
+  "model": "Dashing",
+  "cat": "SUV",
+  "price": 250,
+  "hp": 197,
+  "acc": 8.5,
+  "top": 200,
+  "seats": 5,
+  "engine": "1.5L turbo",
+  "wanted": 58,
+  "rented": 390,
+  "ac": "#36b0f9",
+  "desc": "Bold, futuristic styling and a feature-packed cabin at a small-car rate."
+ },
+ {
+  "slug": "x90-plus",
+  "img": "jtoure_x90_plus2026.png",
+  "brand": "Jetour",
+  "model": "X90 Plus",
+  "cat": "SUV",
+  "price": 350,
+  "hp": 187,
+  "acc": 9.5,
+  "top": 190,
+  "seats": 7,
+  "engine": "1.6L turbo",
+  "wanted": 62,
+  "rented": 430,
+  "ac": "#5cc8ff",
+  "desc": "A seven-seat family hauler with a soft ride and plenty of tech."
+ },
+ {
+  "slug": "x70-plus",
+  "img": "jtoure_x_70plus2025.png",
+  "brand": "Jetour",
+  "model": "X70 Plus",
+  "cat": "SUV",
+  "price": 260,
+  "hp": 156,
+  "acc": 10.2,
+  "top": 185,
+  "seats": 7,
+  "engine": "1.5L turbo",
+  "wanted": 63,
+  "rented": 520,
+  "ac": "#5cc8ff",
+  "desc": "Spacious and value-packed. Seven seats for group trips without breaking the budget."
+ },
+ {
+  "slug": "kia-telluride",
+  "img": "kia-2026.png",
+  "brand": "Kia",
+  "model": "Telluride",
+  "cat": "SUV",
+  "price": 520,
+  "hp": 291,
+  "acc": 7.5,
+  "top": 200,
+  "seats": 7,
+  "engine": "3.8L V6",
+  "wanted": 70,
+  "rented": 330,
+  "ac": "#5cc8ff",
+  "desc": "Boxy, bold and roomy. A rugged-looking family SUV with a premium cabin."
+ },
+ {
+  "slug": "k5",
+  "img": "kia-k5-2025.png",
+  "brand": "Kia",
+  "model": "K5",
+  "cat": "Sedan",
+  "price": 260,
+  "hp": 180,
+  "acc": 8.5,
+  "top": 210,
+  "seats": 5,
+  "engine": "2.0L I4",
+  "wanted": 60,
+  "rented": 700,
+  "ac": "#364ff9",
+  "desc": "Fastback style and punchy handling. Feels pricier than it is."
+ },
+ {
+  "slug": "rio",
+  "img": "kia-rio-2026.png",
+  "brand": "Kia",
+  "model": "Rio",
+  "cat": "Sedan",
+  "price": 150,
+  "hp": 120,
+  "acc": 11,
+  "top": 180,
+  "seats": 5,
+  "engine": "1.6L I4",
+  "wanted": 50,
+  "rented": 1500,
+  "ac": "#36b0f9",
+  "desc": "The budget champion. Small, light and easy to park and fuel."
+ },
+ {
+  "slug": "kia seltos",
+  "img": "kia-seltos_2027.png",
+  "brand": "Kia",
+  "model": "Seltos",
+  "cat": "SUV",
+  "price": 230,
+  "hp": 146,
+  "acc": 10,
+  "top": 185,
+  "seats": 5,
+  "engine": "2.0L I4",
+  "wanted": 65,
+  "rented": 650,
+  "ac": "#5cc8ff",
+  "desc": "A compact crossover with a smart cabin and nimble steering."
+ },
+ {
+  "slug": "sportage",
+  "img": "kia-sportage_2026.png",
+  "brand": "Kia",
+  "model": "Sportage",
+  "cat": "SUV",
+  "price": 300,
+  "hp": 187,
+  "acc": 9.5,
+  "top": 195,
+  "seats": 5,
+  "engine": "2.0L I4",
+  "wanted": 78,
+  "rented": 880,
+  "ac": "#5cc8ff",
+  "desc": "Modern, curvy and packed with tech. One of the most wanted family SUVs on the lot."
+ },
+ {
+  "slug": "lexus-gx",
+  "img": "lexus_gx_2026.png",
+  "brand": "Lexus",
+  "model": "GX 550",
+  "cat": "Luxury",
+  "price": 1250,
+  "hp": 349,
+  "acc": 6.9,
+  "top": 200,
+  "seats": 7,
+  "engine": "3.4L twin-turbo V6",
+  "wanted": 89,
+  "rented": 300,
+  "ac": "#d9b25f",
+  "desc": "Rugged luxury with a twin-turbo V6. Boxy, bold and built for the real outdoors."
+ },
+ {
+  "slug": "lexus-lx",
+  "img": "lexus_lx_2026-.png",
+  "brand": "Lexus",
+  "model": "LX 600",
+  "cat": "Luxury",
+  "price": 1550,
+  "hp": 409,
+  "acc": 6.9,
+  "top": 210,
+  "seats": 7,
+  "engine": "3.5L twin-turbo V6",
+  "wanted": 94,
+  "rented": 410,
+  "ac": "#d9b25f",
+  "desc": "The flagship. Executive comfort, twin-turbo thrust and VIP presence anywhere."
+ },
+ {
+  "slug": "limousine",
+  "img": "limousine-2024.png",
+  "brand": "Prestige",
+  "model": "Stretch Limousine",
+  "cat": "Luxury",
+  "price": 3200,
+  "hp": 300,
+  "acc": 9.0,
+  "top": 180,
+  "seats": 8,
+  "engine": "V8",
+  "wanted": 55,
+  "rented": 120,
+  "ac": "#d9b25f",
+  "desc": "Stretch luxury for weddings, VIP arrivals and nights people remember."
+ },
+ {
+  "slug": "rogue",
+  "img": "nissan-rogue2026.png",
+  "brand": "Nissan",
+  "model": "Rogue",
+  "cat": "SUV",
+  "price": 330,
+  "hp": 201,
+  "acc": 9.0,
+  "top": 190,
+  "seats": 5,
+  "engine": "1.5L VC-turbo",
+  "wanted": 59,
+  "rented": 470,
+  "ac": "#5cc8ff",
+  "desc": "Smooth, efficient and family-ready. A comfortable crossover for long weekends."
+ },
+ {
+  "slug": "nissan-z",
+  "img": "nissan-z2026.png",
+  "brand": "Nissan",
+  "model": "Z",
+  "cat": "Sports",
+  "price": 1100,
+  "hp": 400,
+  "acc": 4.4,
+  "top": 250,
+  "seats": 2,
+  "engine": "3.0L twin-turbo V6",
+  "wanted": 71,
+  "rented": 190,
+  "ac": "#f9364f",
+  "desc": "Pure two-seat sports coupe. Twin-turbo punch and old-school driver focus."
+ },
+ {
+  "slug": "phantom",
+  "img": "rolls-royce_phantom-2026.png",
+  "brand": "Rolls-Royce",
+  "model": "Phantom",
+  "cat": "Luxury",
+  "price": 6500,
+  "hp": 563,
+  "acc": 5.3,
+  "top": 250,
+  "seats": 5,
+  "engine": "6.75L twin-turbo V12",
+  "wanted": 82,
+  "rented": 75,
+  "ac": "#d9b25f",
+  "desc": "The pinnacle. Silent, hand-built and ceremonial, for moments that matter."
+ },
+ {
+  "slug": "s-class",
+  "img": "s-class2026.png",
+  "brand": "Mercedes-Benz",
+  "model": "S-Class",
+  "cat": "Luxury",
+  "price": 2200,
+  "hp": 496,
+  "acc": 4.9,
+  "top": 250,
+  "seats": 5,
+  "engine": "4.0L biturbo V8",
+  "wanted": 87,
+  "rented": 240,
+  "ac": "#d9b25f",
+  "desc": "The benchmark. Rear-seat serenity and a V8 hush."
+ },
+ {
+  "slug": "santa-fe",
+  "img": "santa-fe2026.png",
+  "brand": "Hyundai",
+  "model": "Santa Fe",
+  "cat": "SUV",
+  "price": 420,
+  "hp": 277,
+  "acc": 7.5,
+  "top": 210,
+  "seats": 7,
+  "engine": "2.5L turbo",
+  "wanted": 69,
+  "rented": 480,
+  "ac": "#5cc8ff",
+  "desc": "Bold, boxy and spacious with seven seats. Excellent for family road days."
+ },
+ {
+  "slug": "corvette",
+  "img": "shevrolete-corvette2026.png",
+  "brand": "Chevrolet",
+  "model": "Corvette Stingray",
+  "cat": "Sports",
+  "price": 2100,
+  "hp": 495,
+  "acc": 2.9,
+  "top": 312,
+  "seats": 2,
+  "engine": "6.2L V8",
+  "wanted": 92,
+  "rented": 210,
+  "ac": "#ff4d2e",
+  "desc": "Mid-engine V8 supercar thrills with the roof gone. Roof down, volume up."
+ },
+ {
+  "slug": "sonata",
+  "img": "sonata-2026.png",
+  "brand": "Hyundai",
+  "model": "Sonata",
+  "cat": "Sedan",
+  "price": 250,
+  "hp": 191,
+  "acc": 8.5,
+  "top": 210,
+  "seats": 5,
+  "engine": "2.5L I4",
+  "wanted": 74,
+  "rented": 930,
+  "ac": "#9aa7ff",
+  "desc": "Sleek, quiet and generously equipped. Premium feel at a mainstream rate."
+ },
+ {
+  "slug": "kia sportage",
+  "img": "sportage2024.png",
+  "brand": "Kia",
+  "model": "Sportage (2024)",
+  "cat": "SUV",
+  "price": 270,
+  "hp": 181,
+  "acc": 10,
+  "top": 190,
+  "seats": 5,
+  "engine": "2.4L I4",
+  "wanted": 61,
+  "rented": 780,
+  "ac": "#f9364f",
+  "desc": "Proven, comfortable and economical. The previous-generation favourite at a smarter rate."
+ },
+ {
+  "slug": "tucson",
+  "img": "tosun-2025.png",
+  "brand": "Hyundai",
+  "model": "Tucson",
+  "cat": "SUV",
+  "price": 290,
+  "hp": 187,
+  "acc": 9.5,
+  "top": 195,
+  "seats": 5,
+  "engine": "2.5L I4",
+  "wanted": 76,
+  "rented": 860,
+  "ac": "#5cc8ff",
+  "desc": "Futuristic design with efficient power. A top-rented compact SUV for good reason."
+ },
+ {
+  "slug": "alphard",
+  "img": "van2026.png",
+  "brand": "Toyota",
+  "model": "Alphard",
+  "cat": "Luxury",
+  "price": 900,
+  "hp": 275,
+  "acc": 8.0,
+  "top": 180,
+  "seats": 7,
+  "engine": "2.4L turbo",
+  "wanted": 72,
+  "rented": 330,
+  "ac": "#d9b25f",
+  "desc": "First-class on wheels. Captain's chairs, sliding doors and a hushed ride for VIP groups."
+ },
+ {
+  "slug": "t-roc",
+  "img": "volkswagen-t-roc2026-.png",
+  "brand": "Volkswagen",
+  "model": "T-Roc",
+  "cat": "SUV",
+  "price": 310,
+  "hp": 190,
+  "acc": 7.0,
+  "top": 215,
+  "seats": 5,
+  "engine": "2.0L turbo",
+  "wanted": 57,
+  "rented": 360,
+  "ac": "#f9b036",
+  "desc": "Compact and sporty with a German chassis. Fun to drive, easy to park."
+ },
+ {
+  "slug": "tiguan",
+  "img": "volkswagen_tiguan2025.png",
+  "brand": "Volkswagen",
+  "model": "Tiguan",
+  "cat": "SUV",
+  "price": 380,
+  "hp": 184,
+  "acc": 8.5,
+  "top": 205,
+  "seats": 5,
+  "engine": "2.0L turbo",
+  "wanted": 64,
+  "rented": 400,
+  "ac": "#5cc8ff",
+  "desc": "Refined, roomy and solid. The sensible German SUV with a premium feel."
+ }
+];
+</script>
+<script>
+/* VANGUARD ARSENAL: video scenes, 45-car fleet, vault, dock, contract. Uses FLEET (above) and the slider globals CARS, cur. */
+(() => {
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const root = document.documentElement, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const arsenal = $('#arsenal'), grid = $('#grid');
+const by = FLEET.reduce((m, f) => (m[f.slug] = f, m), {});
+
+/* ---------- badges: top 6 wanted / top 6 rented ---------- */
+const top = k => new Set([...FLEET].sort((a, b) => b[k] - a[k]).slice(0, 6).map(f => f.slug));
+const tw = top('wanted'), tr = top('rented');
+FLEET.forEach(f => f.badge = tw.has(f.slug) ? 'MOST WANTED' : tr.has(f.slug) ? 'MOST RENTED' : '');
+if (by.phantom) by.phantom.badge = 'BY RESERVATION';
+
+/* ---------- build the 45 floor-shadow units (no boxes) ---------- */
+grid.innerHTML = FLEET.map((f, i) => `<article class="unit" data-slug="${f.slug}" style="--c:${f.ac};--k:${i % 7}">
+ <button class="hit" aria-label="Open ${f.brand} ${f.model}"><span class="pad"><span class="shd"></span>
+ <img src="${f.img}" alt="${f.brand} ${f.model}" loading="lazy" decoding="async" draggable="false"></span>
+ <span class="meta"><small>${f.brand.toUpperCase()} · ${f.cat.toUpperCase()}</small><b>${f.model}</b><span class="ln2"></span>
+ <span class="row"><span class="pr"><i>SAR</i>${fmt(f.price)}<em>/day</em></span>${f.badge ? `<span class="tg">${f.badge}</span>` : ''}</span></span></button></article>`).join('');
+const els = new Map(FLEET.map(f => [f.slug, $(`.unit[data-slug="${f.slug}"]`, grid)]));
+
+const rio = new IntersectionObserver(es => {
+  let j = 0;
+  es.filter(e => e.isIntersecting).forEach(e => {
+    const el = e.target; el.style.transitionDelay = (j++ * 70) + 'ms'; el.classList.add('in'); rio.unobserve(el);
+    setTimeout(() => el.style.transitionDelay = '', 1700);
+  });
+}, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+els.forEach(el => reduce ? el.classList.add('in') : rio.observe(el));
+
+/* hover tilt + moving shadow + accent hand-off */
+grid.addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  const hit = e.target.closest('.hit'); if (!hit) return;
+  const pad = $('.pad', hit), r = pad.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+  pad.style.setProperty('--ry', (x * 16).toFixed(1) + 'deg'); pad.style.setProperty('--rx', (-y * 9).toFixed(1) + 'deg');
+  pad.style.setProperty('--sx', (-x * 46).toFixed(0));
+  arsenal.style.setProperty('--ac', hit.parentElement.style.getPropertyValue('--c'));
+});
+grid.addEventListener('pointerout', e => {
+  const hit = e.target.closest('.hit'); if (!hit || hit.contains(e.relatedTarget)) return;
+  const pad = $('.pad', hit); ['--ry', '--rx', '--sx'].forEach(p => pad.style.removeProperty(p));
+});
+
+/* ---------- toolbar: search, brand, category, sort (animated reorder) ---------- */
+const S = { q: '', brand: '', cat: 'All', sort: 'wanted' };
+const brands = [...new Set(FLEET.map(f => f.brand))].sort();
+$('#brandSel').innerHTML = '<option value="">ALL BRANDS</option>' + brands.map(b => `<option>${b}</option>`).join('');
+const cmp = { wanted: (a, b) => b.wanted - a.wanted, rented: (a, b) => b.rented - a.rented, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price, az: (a, b) => (a.brand + a.model).localeCompare(b.brand + b.model) };
+let visible = FLEET.slice();
+function apply(animate = true) {
+  const first = new Map(FLEET.map(f => [f.slug, els.get(f.slug).getBoundingClientRect()]));
+  const terms = S.q.toLowerCase().split(/\s+/).filter(Boolean);
+  visible = FLEET.filter(f => (!S.brand || f.brand === S.brand) && (S.cat === 'All' || f.cat === S.cat) &&
+    terms.every(t => `${f.brand} ${f.model} ${f.cat} ${f.engine}`.toLowerCase().includes(t))).sort(cmp[S.sort]);
+  const keep = new Set(visible.map(f => f.slug));
+  FLEET.forEach(f => els.get(f.slug).classList.toggle('gone', !keep.has(f.slug)));
+  visible.forEach(f => { const el = els.get(f.slug); grid.appendChild(el); el.classList.add('in'); rio.unobserve(el); });
+  let empty = $('.empty', grid);
+  if (!visible.length) { if (!empty) { empty = document.createElement('p'); empty.className = 'empty'; grid.appendChild(empty); } empty.textContent = 'NO MACHINE MATCHES. TRY ANOTHER BRAND OR SPEC'; }
+  else empty?.remove();
+  $('#cnt').innerHTML = `<b>${visible.length}</b> / ${FLEET.length}`;
+  if (!animate || reduce) return;
+  visible.forEach((f, i) => {
+    const el = els.get(f.slug), a = first.get(f.slug), b = el.getBoundingClientRect();
+    if (!a.width) el.animate([{ opacity: 0, transform: 'translateY(50px) scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: Math.min(i, 12) * 40, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+    else if (a.left !== b.left || a.top !== b.top) el.animate([{ transform: `translate(${a.left - b.left}px,${a.top - b.top}px)` }, { transform: 'none' }], { duration: 800, easing: 'cubic-bezier(.77,0,.18,1)' });
+  });
+}
+$('#q').addEventListener('input', e => { S.q = e.target.value.trim(); apply(); });
+$('#brandSel').addEventListener('change', e => { S.brand = e.target.value; apply(); });
+const chipGroup = (sel, key) => $$(sel + ' button').forEach(b => b.addEventListener('click', () => {
+  $$(sel + ' button').forEach(x => x.classList.toggle('on', x === b)); S[key] = b.dataset.v; apply();
+}));
+chipGroup('#sortChips', 'sort'); chipGroup('#catChips', 'cat');
+apply(false);
+
+/* ---------- video scenes: text appears at exact video timestamps ---------- */
+function scene(sec, trigger, vids, thr, resetOnLeave) {
+  const cues = $$('[data-at]', sec), main = vids[0]; let started = false, t0 = 0, raf = 0;
+  /* cues follow the video clock; if the video cannot advance (autoplay blocked, low-power mode) a timer takes over */
+  const tick = () => {
+    const t = main.currentTime > .05 ? main.currentTime : Math.max(0, (performance.now() - t0) / 1000 - 1.2); let all = true;
+    cues.forEach(c => { if (t >= +c.dataset.at) c.classList.add('show'); else all = false; });
+    if (!all && started) raf = requestAnimationFrame(tick);
+  };
+  const go = () => { sec.classList.add('in'); started = true; t0 = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); vids.forEach(v => v.play().catch(() => {})); };
+  if (reduce || !('IntersectionObserver' in window)) { sec.classList.add('in'); cues.forEach(c => c.classList.add('show')); return; }
+  new IntersectionObserver(es => es.forEach(e => { if (e.intersectionRatio >= thr && (!started || main.paused)) go(); }), { threshold: [thr] }).observe(trigger);
+  new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) { vids.forEach(v => { v.pause(); if (resetOnLeave) v.currentTime = 0; }); if (resetOnLeave) { started = false; cancelAnimationFrame(raf); sec.classList.remove('in'); cues.forEach(c => c.classList.remove('show')); } }
+    else if (started && main.paused) vids.forEach(v => v.play().catch(() => {}));
+  }), { threshold: 0 }).observe(sec);
+}
+scene(arsenal, $('.s1'), [$('#v1')], .35, true);
+scene($('#beyond'), $('#beyond'), [$('#v2a'), $('#v2b')], .55, true);
+
+/* ---------- scroll: progress bar, intro parallax, velocity tilt, sticky-nav feel ---------- */
+const bar = document.createElement('div'); bar.className = 'progress'; document.body.appendChild(bar);
+let lastY = scrollY, vel = 0, tick2 = false;
+const s1 = $('.s1');
+addEventListener('scroll', () => { if (!tick2) { tick2 = true; requestAnimationFrame(() => {
+  const y = scrollY, max = root.scrollHeight - innerHeight;
+  bar.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+  s1.style.setProperty('--p', Math.max(0, Math.min(1, (y - arsenal.offsetTop) / innerHeight)).toFixed(3));
+  vel += (Math.max(-9, Math.min(9, (y - lastY) * .35)) - vel) * .5; lastY = y; grid.style.setProperty('--v', vel.toFixed(2));
+  tick2 = false; }); }
+}, { passive: true });
+(function decay() { if (Math.abs(vel) > .02) { vel *= .9; grid.style.setProperty('--v', vel.toFixed(2)); } requestAnimationFrame(decay); })();
+$('.cue').addEventListener('click', () => arsenal.scrollIntoView({ behavior: 'smooth' }));
+$$('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); $(a.dataset.go).scrollIntoView({ behavior: 'smooth' }); }));
+document.addEventListener('pointerover', e => $('#cur')?.classList.toggle('big', !!e.target.closest('a,button,.hit')));
+
+/* ---------- rental maths (VAT 15%, 7+ days -10%, 30+ days -25%) ---------- */
+const quote = (f, d) => { const sub = f.price * d, rate = d >= 30 ? .25 : d >= 7 ? .10 : 0, disc = Math.round(sub * rate), net = sub - disc, vat = Math.round(net * .15);
+  return { sub, rate, disc, vat, total: net + vat, deposit: Math.max(500, Math.round(f.price * 2 / 10) * 10) }; };
+const iso = d => d.toISOString().slice(0, 10), addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const nice = d => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+const today = new Date(); today.setHours(0, 0, 0, 0);
+const P = { f: null, date: addDays(today, 1), days: 3 };
+
+/* ---------- vault: full-version view with shared-element flight ---------- */
+const vault = $('#vault'), vImg = $('#vImg'), dock = $('#dock'), pDate = $('#pDate');
+pDate.min = iso(today); pDate.value = iso(P.date);
+let srcEl = null, flying = false;
+let home = null;
+const sizeV = () => { const r = vImg.naturalWidth / vImg.naturalHeight || 2, cw = $('#vCar').clientWidth, mh = innerHeight * (innerWidth <= 900 ? .32 : .58), w = Math.min(cw, mh * r); vImg.style.width = w + 'px'; vImg.style.height = (w / r) + 'px'; };
+addEventListener('resize', () => vault.classList.contains('open') && sizeV());
+const inView = el => { const r = el && el.getBoundingClientRect(); return !!r && r.width > 0 && r.bottom > 0 && r.top < innerHeight; };
+function fill(f) {
+  P.f = f; vault.style.setProperty('--c', f.ac); dock.style.setProperty('--ac', f.ac);
+  $('#vCat').textContent = f.cat.toUpperCase(); $('#vBadge').innerHTML = f.badge ? `<span class="tg">${f.badge}</span>` : '';
+  $('#vBrand').textContent = f.brand.toUpperCase(); $('#vModel').textContent = f.model; $('#vPrice').textContent = fmt(f.price);
+  $('#vDesc').textContent = f.desc; $('#vGhost').textContent = f.model.toUpperCase();
+  $('#vSpecs').innerHTML = `<div><b>${f.hp}</b><span>HP</span></div><div><b>${f.acc}s</b><span>0 TO 100</span></div><div><b>${f.top}</b><span>KM/H TOP</span></div><div><b>${f.seats}</b><span>SEATS</span></div><div class="wide">${f.engine}  ·  ${f.rented.toLocaleString('en-US')} rentals  ·  demand ${f.wanted}/100</div>`;
+  vImg.src = f.img; vImg.alt = `${f.brand} ${f.model}`; $('#kImg').src = f.img; $('#kName').textContent = `${f.brand} ${f.model}`;
+  plan();
+}
+function plan() {
+  const f = P.f, q = quote(f, P.days), ret = addDays(P.date, P.days);
+  $('#dn').textContent = P.days; $('#pRet').textContent = nice(ret);
+  $('#cSub').textContent = `SAR ${fmt(f.price)} × ${P.days} = ${fmt(q.sub)}`;
+  $('#cDiscRow').style.display = q.disc ? '' : 'none'; $('#cDisc').textContent = `− SAR ${fmt(q.disc)} (${q.rate * 100}%)`;
+  $('#cVat').textContent = `SAR ${fmt(q.vat)}`; $('#cTot').textContent = `SAR ${fmt(q.total)}`;
+  $$('#dChips button').forEach(b => b.classList.toggle('on', +b.dataset.d === P.days));
+  $('#kLine').textContent = `${P.days} day${P.days > 1 ? 's' : ''} · ${P.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} → ${ret.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+  $('#kTot').textContent = `SAR ${fmt(q.total)}`;
+}
+const setDays = n => { P.days = Math.max(1, Math.min(90, n)); plan(); };
+$('#dm').onclick = () => setDays(P.days - 1); $('#dp').onclick = () => setDays(P.days + 1);
+$$('#dChips button').forEach(b => b.onclick = () => setDays(+b.dataset.d));
+pDate.addEventListener('change', () => { const d = new Date(pDate.value + 'T00:00:00'); P.date = isNaN(d) || d < today ? addDays(today, 1) : d; pDate.value = iso(P.date); plan(); });
+
+const flight = (img, from, to, done) => {
+  const fly = document.createElement('img'); fly.className = 'fly'; fly.src = img;
+  Object.assign(fly.style, { left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.height + 'px', objectFit: 'contain' });
+  document.body.appendChild(fly);
+  const sx = to.width / from.width, sy = to.height / from.height;
+  fly.animate([{ transform: 'none' }, { transform: `translate(${to.left - from.left}px,${to.top - from.top}px) scale(${sx},${sy})` }], { duration: 950, easing: 'cubic-bezier(.77,0,.18,1)', fill: 'forwards' }).onfinish = () => { done(); fly.remove(); };
+};
+function openVault(slug, fromImg) {
+  const f = by[slug]; if (!f || flying) return;
+  fill(f); srcEl = els.get(slug); home = fromImg || (srcEl && $('img', srcEl)); const gridImg = home;
+  vImg.classList.remove('ready'); vault.classList.add('open'); vault.setAttribute('aria-hidden', 'false'); root.classList.add('lock');
+  arsenal.classList.add('focus'); $$('.unit.sel').forEach(u => u.classList.remove('sel')); if (srcEl && srcEl.contains(home)) srcEl.classList.add('sel');
+  dock.classList.add('show'); setTimeout(() => $('#vClose').focus({ preventScroll: true }), 50);
+  const go = () => {
+    sizeV(); const to = vImg.getBoundingClientRect();
+    if (reduce || !inView(gridImg)) { vImg.classList.add('ready'); return; }
+    flying = true; flight(f.img, gridImg.getBoundingClientRect(), to, () => { vImg.classList.add('ready'); flying = false; });
+  };
+  vImg.complete ? requestAnimationFrame(go) : (vImg.onload = () => requestAnimationFrame(go));
+}
+function closeVault() {
+  if (!vault.classList.contains('open') || flying) return;
+  const gridImg = home, from = vImg.getBoundingClientRect();
+  const finish = () => { $$('.unit.sel').forEach(u => u.classList.remove('sel')); arsenal.classList.remove('focus'); };
+  vault.classList.remove('open'); vault.setAttribute('aria-hidden', 'true'); root.classList.remove('lock');
+  if (gridImg && !reduce && inView(gridImg)) { vImg.classList.remove('ready'); flying = true; flight(P.f.img, from, gridImg.getBoundingClientRect(), () => { finish(); flying = false; }); }
+  else finish();
+}
+function step(d) {
+  if (flying) return; const i = visible.findIndex(f => f.slug === P.f.slug), n = visible.length; if (!n) return;
+  const f = visible[(i + d + n) % n]; srcEl = els.get(f.slug); home = $('img', srcEl); $$('.unit.sel').forEach(u => u.classList.remove('sel')); srcEl.classList.add('sel'); fill(f);
+  vImg.classList.remove('ready'); vImg.style.transition = 'none'; vImg.style.transform = `translateX(${d * 90}px)`; void vImg.offsetWidth;
+  vImg.style.transition = 'transform .8s cubic-bezier(.16,1,.3,1),opacity .6s'; const show = () => { sizeV(); vImg.style.transform = ''; vImg.classList.add('ready'); }; vImg.complete ? show() : (vImg.onload = show);
+  $('#vGhost').style.setProperty('--gx', d * -30 + 'px'); setTimeout(() => $('#vGhost').style.setProperty('--gx', '0px'), 60);
+}
+grid.addEventListener('click', e => { const u = e.target.closest('.unit'); if (u) openVault(u.dataset.slug, $('img', u)); });
+$('#vClose').onclick = closeVault; $('#vPrev').onclick = () => step(-1); $('#vNext').onclick = () => step(1);
+vault.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const x = e.clientX / innerWidth - .5, y = e.clientY / innerHeight - .5;
+  vault.style.setProperty('--vry', (x * 14).toFixed(1) + 'deg'); vault.style.setProperty('--vrx', (-y * 7).toFixed(1) + 'deg'); });
+$('#rent')?.addEventListener('click', e => { e.preventDefault(); e.stopImmediatePropagation(); openVault(CARS[cur].slug, $('.slide.on img')); }, true);
+
+/* dock: selection persists while browsing */
+$('#kX').onclick = () => { dock.classList.remove('show'); P.f = null; };
+dock.addEventListener('click', e => { if (e.target.closest('img,.k-info') && P.f && !vault.classList.contains('open')) openVault(P.f.slug, els.get(P.f.slug) && $('img', els.get(P.f.slug))); });
+
+/* ---------- contract + rent sheet ---------- */
+const sheet = $('#sheet'), sBody = $('#sBody');
+const ref = () => 'VG-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+const rows = (f, q, ret) => `<table><tr><td>Vehicle</td><td>${f.brand} ${f.model}</td></tr><tr><td>Pick-up</td><td>${nice(P.date)}</td></tr><tr><td>Return</td><td>${nice(ret)} (${P.days} day${P.days > 1 ? 's' : ''})</td></tr>
+ <tr><td>Daily rate</td><td>SAR ${fmt(f.price)}</td></tr><tr><td>Subtotal</td><td>SAR ${fmt(q.sub)}</td></tr>${q.disc ? `<tr><td>Long-rental discount (${q.rate * 100}%)</td><td>− SAR ${fmt(q.disc)}</td></tr>` : ''}
+ <tr><td>VAT 15%</td><td>SAR ${fmt(q.vat)}</td></tr><tr><td><b>Total</b></td><td><b>SAR ${fmt(q.total)}</b></td></tr><tr><td>Refundable deposit (held at pick-up)</td><td>SAR ${fmt(q.deposit)}</td></tr></table>`;
+function showSheet(mode) {
+  const f = P.f; if (!f) return; const q = quote(f, P.days), ret = addDays(P.date, P.days), age = ['Sports', 'Luxury'].includes(f.cat) ? 25 : 21;
+  sheet.style.setProperty('--ac', f.ac);
+  if (mode === 'contract') sBody.innerHTML = `<h3>RENTAL AGREEMENT</h3><div class="ref">VANGUARD DRIVES · DRAFT · ${new Date().toLocaleDateString('en-GB')}</div>${rows(f, q, ret)}
+   <ol><li>Driver must hold a valid licence for at least 1 year and be ${age}+ years old.</li><li>${f.cat === 'Pickup' || f.cat === 'SUV' ? '250 km/day included.' : '250 km/day included.'} Extra distance: SAR ${['Sports', 'Luxury'].includes(f.cat) ? '2.00' : '1.00'}/km.</li><li>Fuel level at return must match fuel level at pick-up.</li><li>Comprehensive insurance included. Driver excess is limited to the deposit.</li><li>Deposit is refunded within 7 working days after inspection.</li><li>Late return: 59-minute grace, then charged as an extra day.</li><li>No racing, towing or travel outside KSA without written approval. No smoking.</li><li>Free cancellation up to 24 hours before pick-up.</li></ol>
+   <div class="sigs"><div>CLIENT SIGNATURE</div><div>VANGUARD DRIVES</div></div><div class="acts"><button class="btn fill" id="sPrint">Print / Save PDF</button><button class="btn ghost" id="sRent">Continue to rent</button></div>`;
+  else sBody.innerHTML = `<h3>CONFIRM YOUR RENTAL</h3><div class="ref">${f.brand.toUpperCase()} ${f.model.toUpperCase()}</div>${rows(f, q, ret)}
+   <div class="fgrid"><label>FULL NAME<input id="fN" autocomplete="name"></label><label>PHONE<input id="fP" type="tel" autocomplete="tel" placeholder="+966"></label><label class="full">ID / IQAMA NUMBER<input id="fI" inputmode="numeric"></label></div>
+   <div class="acts"><button class="btn fill" id="sGo">Confirm rental</button><button class="btn ghost" id="sRead">Read contract</button></div>`;
+  sheet.classList.add('open'); sheet.setAttribute('aria-hidden', 'false'); root.classList.add('lock');
+  $('#sPrint')?.addEventListener('click', () => print()); $('#sRent')?.addEventListener('click', () => showSheet('rent')); $('#sRead')?.addEventListener('click', () => showSheet('contract'));
+  $('#sGo')?.addEventListener('click', () => {
+    const ins = ['#fN', '#fP', '#fI'].map(s => $(s)); let ok = true;
+    ins.forEach((i, k) => { const good = k === 0 ? i.value.trim().length > 2 : k === 1 ? i.value.replace(/\D/g, '').length >= 9 : i.value.replace(/\D/g, '').length >= 8; i.classList.toggle('bad', !good); ok = ok && good; });
+    if (!ok) return;
+    const id = ref(), list = JSON.parse(localStorage.getItem('vg-bookings') || '[]');
+    list.push({ id, car: f.slug, from: iso(P.date), days: P.days, total: q.total, name: ins[0].value.trim() }); try { localStorage.setItem('vg-bookings', JSON.stringify(list)); } catch (e) {}
+    sBody.innerHTML = `<div class="ok"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="36"/><path d="M24 41l11 11 21-23"/></svg><h3>BOOKING CONFIRMED</h3><code>${id}</code><p style="color:#b9bec8">${f.brand} ${f.model} · ${nice(P.date)} → ${nice(ret)}<br>Our team will contact you to arrange pick-up.</p><div class="acts"><button class="btn fill" id="sDone">Done</button><button class="btn ghost" id="sPrint2">Print contract</button></div></div>`;
+    $('#sDone').onclick = () => { closeSheet(); dock.classList.remove('show'); closeVault(); }; $('#sPrint2').onclick = () => showSheet('contract');
+  });
+}
+function closeSheet() { sheet.classList.remove('open'); sheet.setAttribute('aria-hidden', 'true'); if (!vault.classList.contains('open')) root.classList.remove('lock'); }
+const toBooking = (step) => { if (!P.f) return; const u = `booking.html?car=${P.f.slug}&date=${iso(P.date)}&days=${P.days}` + (step ? '&step=' + step : ''); const w = $('#wipe'); sessionStorage.setItem('wipe', '1'); w && w.classList.add('cover'); setTimeout(() => { location.href = u; }, 520); };
+$('#bContract').onclick = () => toBooking('contract'); $('#bRent').onclick = () => toBooking();
+$('#sClose').onclick = closeSheet; sheet.addEventListener('click', e => { if (e.target === sheet) closeSheet(); });
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') { sheet.classList.contains('open') ? closeSheet() : closeVault(); }
+  else if (vault.classList.contains('open') && !sheet.classList.contains('open') && !/INPUT|SELECT/.test(document.activeElement.tagName)) { if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); }
+});
+})();
+
+</script>
+</body>
+</html>
